@@ -85,6 +85,7 @@
     <Compile Include="Model\MainModel.cs" />
     <Compile Include="Object\Position.cs" />
     <Compile Include="Object\Route.cs" />
+    <Compile Include="Utility\ListViewItemToIdConverter.cs" />
     <Compile Include="Utility\LocalTimeToStringConverter.cs" />
     <Compile Include="Utility\OrdinalConverter.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />

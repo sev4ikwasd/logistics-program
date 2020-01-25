@@ -4,13 +4,12 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:LogisticsProgram"
-        xmlns:col="clr-namespace:System.Collections;assembly=mscorlib"
-        xmlns:sys="clr-namespace:System;assembly=mscorlib"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800"
         x:Name="MainWindowName">
     <Window.Resources>
         <local:LocalTimeToStringConverter x:Key="LocalTimeToStringConverter"/>
+        <local:ListViewItemToIdConverter x:Key="ListViewItemToIdConverter"/>
     </Window.Resources>
     <Window.DataContext>
         <local:MainViewModel/>
@@ -82,7 +81,8 @@
                                 </Grid.RowDefinitions>
                                 <TextBox Grid.Column="0" Text="{Binding Path=Address}"/>
                                 <TextBox Grid.Column="1" Text="{Binding Path=Time, Converter={StaticResource LocalTimeToStringConverter}}"/>
-                                <Button Grid.Column="2" Content="-" Width="18" Command="{Binding DataContext.RemovePositionCommand, ElementName=MainWindowName}" CommandParameter="{Binding Path=(ItemsControl.AlternationIndex), RelativeSource={RelativeSource TemplatedParent}}"/>
+                                <!--<Button Grid.Column="2" Content="-" Width="18" Command="{Binding DataContext.RemovePositionCommand, ElementName=MainWindowName}" CommandParameter="{Binding Path=(ItemsControl.AlternationIndex), RelativeSource={RelativeSource TemplatedParent}}"/>-->
+                                <Button Grid.Column="2" Content="-" Width="18" Command="{Binding DataContext.RemovePositionCommand, ElementName=MainWindowName}" CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListViewItem}}, Converter={StaticResource ListViewItemToIdConverter}}"/>
                             </Grid>
                         </DataTemplate>
                     </ListView.ItemTemplate>
