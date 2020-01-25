@@ -9,7 +9,6 @@
         x:Name="MainWindowName">
     <Window.Resources>
         <local:LocalTimeToStringConverter x:Key="LocalTimeToStringConverter"/>
-        <local:ListViewItemToIdConverter x:Key="ListViewItemToIdConverter"/>
     </Window.Resources>
     <Window.DataContext>
         <local:MainViewModel/>
@@ -81,8 +80,7 @@
                                 </Grid.RowDefinitions>
                                 <TextBox Grid.Column="0" Text="{Binding Path=Address}"/>
                                 <TextBox Grid.Column="1" Text="{Binding Path=Time, Converter={StaticResource LocalTimeToStringConverter}}"/>
-                                <!--<Button Grid.Column="2" Content="-" Width="18" Command="{Binding DataContext.RemovePositionCommand, ElementName=MainWindowName}" CommandParameter="{Binding Path=(ItemsControl.AlternationIndex), RelativeSource={RelativeSource TemplatedParent}}"/>-->
-                                <Button Grid.Column="2" Content="-" Width="18" Command="{Binding DataContext.RemovePositionCommand, ElementName=MainWindowName}" CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListViewItem}}, Converter={StaticResource ListViewItemToIdConverter}}"/>
+                                <Button Grid.Column="2" Content="-" Width="18" Command="{Binding DataContext.RemovePositionCommand, ElementName=MainWindowName}" CommandParameter="{Binding Path=.}"/>
                             </Grid>
                         </DataTemplate>
                     </ListView.ItemTemplate>

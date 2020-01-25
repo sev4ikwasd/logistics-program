@@ -82,15 +82,15 @@ namespace LogisticsProgram
             AddPositionCommand = new DelegateCommand(() => {
                 model.Positions.Add(new Position());
             });
-            RemovePositionCommand = new DelegateCommand<int?>((index) => {
-                model.Positions.RemoveAt(index.Value);
+            RemovePositionCommand = new DelegateCommand<Position>((item) => {
+                model.Positions.Remove(item);
             });
             GenerateRouteCommand = new DelegateCommand(() => {
                 model.GenerateRoute();
             });
         }
         public DelegateCommand AddPositionCommand { get; }
-        public DelegateCommand<int?> RemovePositionCommand { get; }
+        public DelegateCommand<Position> RemovePositionCommand { get; }
         public DelegateCommand GenerateRouteCommand { get; }
     }
 }
