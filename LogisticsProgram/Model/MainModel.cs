@@ -58,18 +58,15 @@ namespace LogisticsProgram
         public Route GenerateRoute()
         {
             //TODO
-            if(!String.IsNullOrEmpty(StartAddress) && (positions.Count() > 0))
+            Route.Positions.Clear();
+            List<Position> positionsList = new List<Position>(positions.ToList());
+            positionsList.Sort();
+            foreach(Position position in positionsList)
             {
-                List<Position> positionsList = new List<Position>(positions.ToList());
-                positionsList.Sort();
-                foreach(Position position in positionsList)
-                {
-                    route.Positions.Add(position);
-                }
-                RaisePropertyChanged("Route");
-                return route;
+                route.Positions.Add(position);
             }
-            return null;
+            RaisePropertyChanged("Route");
+            return route;
         }
     }
 }

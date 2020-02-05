@@ -46,7 +46,7 @@ namespace LogisticsProgram
             }
             set
             {
-                
+
             }
         }
         public Route Route
@@ -60,7 +60,18 @@ namespace LogisticsProgram
 
             }
         }
-        public Boolean RouteVisible;
+        private Boolean routeVisible = false;
+        public Boolean RouteVisible
+        {
+            get
+            {
+                return routeVisible;
+            }
+            set
+            {
+                routeVisible = value;
+            }
+        }
 
         public MainViewModel()
         {//TODO validation
@@ -68,7 +79,7 @@ namespace LogisticsProgram
                 RaisePropertyChanged(e.PropertyName);
                 if (e.PropertyName.Equals("Route"))
                 {
-                    if ((s != null) && (((MainModel)s).Route.Positions.Count != 0))
+                    if (model.Route.Positions.Count != 0)
                     {
                         RouteVisible = true;
                     }
@@ -76,6 +87,7 @@ namespace LogisticsProgram
                     {
                         RouteVisible = false;
                     }
+                    RaisePropertyChanged("RouteVisible");
                 }
             };
 
@@ -86,7 +98,8 @@ namespace LogisticsProgram
                 model.Positions.Remove(item);
             });
             GenerateRouteCommand = new DelegateCommand(() => {
-                model.GenerateRoute();
+                if(!String.IsNullOrEmpty(model.StartAddress) && (model.Positions.Count > 0))
+                    model.GenerateRoute();
             });
         }
         public DelegateCommand AddPositionCommand { get; }

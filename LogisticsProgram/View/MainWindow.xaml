@@ -8,6 +8,7 @@
         Title="MainWindow" Height="450" Width="800"
         x:Name="MainWindowName">
     <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
         <local:LocalTimeToStringConverter x:Key="LocalTimeToStringConverter"/>
     </Window.Resources>
     <Window.DataContext>
@@ -33,7 +34,7 @@
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
                 <Label Grid.Column="0" Grid.Row="0" Content="Введите стартовую позицию:"/>
-                <TextBox Grid.Column="1" Grid.Row="0" Text="{Binding Path=StartAddress}" x:Name="StartAddress"/>
+                <TextBox Grid.Column="1" Grid.Row="0" Text="{Binding Path=StartAddress}" Name="StartAddress"/>
             </Grid>
         </Border>
         <Border Grid.Column="0" Grid.Row="1" BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Stretch" Margin="10,10,10,5">
@@ -46,7 +47,18 @@
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
                 <Label Grid.Column="0" Grid.Row="0" Content="Введите стартовое время:"/>
-                <TextBox Grid.Column="1" Grid.Row="0" Text="{Binding Path=StartTime, Converter={StaticResource LocalTimeToStringConverter}}" x:Name="StartTime"/>
+                <TextBox Grid.Column="1" Grid.Row="0" Name="StartTime">
+                    <TextBox.Text>
+                        <Binding Path="StartTime">
+                            <Binding.ValidationRules>
+                                <ExceptionValidationRule/>
+                            </Binding.ValidationRules>
+                            <Binding.Converter>
+                                <local:LocalTimeToStringConverter/>
+                            </Binding.Converter>
+                        </Binding>
+                    </TextBox.Text>
+                </TextBox>
             </Grid>
         </Border>
         <Border Grid.Row="2" BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Stretch" Margin="10,5,10,10" Height="Auto">
@@ -79,29 +91,49 @@
                                     <RowDefinition/>
                                 </Grid.RowDefinitions>
                                 <TextBox Grid.Column="0" Text="{Binding Path=Address}"/>
-                                <TextBox Grid.Column="1" Text="{Binding Path=Time, Converter={StaticResource LocalTimeToStringConverter}}"/>
+                                <TextBox Grid.Column="1">
+                                    <TextBox.Text>
+                                        <Binding Path="Time">
+                                            <Binding.ValidationRules>
+                                                <ExceptionValidationRule/>
+                                            </Binding.ValidationRules>
+                                            <Binding.Converter>
+                                                <local:LocalTimeToStringConverter/>
+                                            </Binding.Converter>
+                                        </Binding>
+                                    </TextBox.Text>
+                                </TextBox>
                                 <Button Grid.Column="2" Content="-" Width="18" Command="{Binding DataContext.RemovePositionCommand, ElementName=MainWindowName}" CommandParameter="{Binding Path=.}"/>
                             </Grid>
                         </DataTemplate>
                     </ListView.ItemTemplate>
                 </ListView>
                 <Button Grid.Row="2" Grid.Column="0" Content="+" HorizontalAlignment="Left" Margin="7, 0, 0, 5" Width="18" Command="{Binding Path=AddPositionCommand}"/>
-                <Button Grid.Row="2" Grid.Column="1" Content="Сгенерировать маршрут" HorizontalAlignment="Right" Margin="0, 0, 7, 5" Padding="5, 0, 5, 0" Command="{Binding Path=GenerateRouteCommand}"/>
+                <Button Grid.Row="2" Grid.Column="1" Content="Сгенерировать маршрут" HorizontalAlignment="Right" Margin="0, 0, 7, 5" Padding="5, 0, 5, 0" Command="{Binding Path=GenerateRouteCommand}">
+                    <Button.Style>
+                        <Style TargetType="Button">
+                            <Setter Property="IsEnabled" Value="False"/>
+                            <Style.Triggers>
+                                <MultiDataTrigger>
+                                    <MultiDataTrigger.Conditions>
+                                        <Condition Binding="{Binding Path=(Validation.HasError), ElementName=StartTime}" Value="False"/>
+                                    </MultiDataTrigger.Conditions>
+                                <Setter Property="IsEnabled" Value="True"/>
+                                </MultiDataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
             </Grid>
         </Border>
-        <Border Grid.Row="3" BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Stretch" Margin="10,5,10,10" Height="Auto">
-            <ListView Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" BorderBrush="Transparent" Name="Route"><!-- ItemsSource="{Binding Route.Positions}"-->
+        <Border Grid.Row="3" BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Stretch" Margin="10,5,10,10" Height="Auto" Visibility="{Binding RouteVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <ListView Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" BorderBrush="Transparent" ItemsSource="{Binding Route.Positions}" Name="Route">
                 <ListView.ItemContainerStyle>
                     <Style TargetType="ListViewItem">
                         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
                     </Style>
                 </ListView.ItemContainerStyle>
                 <ListView.Resources>
-                    <!--<col:ArrayList x:Key="testK">
-                        <sys:String>Test</sys:String>
-                        <sys:String>Test</sys:String>
-                        <sys:String>Test</sys:String>
-                    </col:ArrayList>-->
                     <local:OrdinalConverter x:Key="OrdinalConverter" />
                 </ListView.Resources>
                 <ListView.ItemTemplate>
@@ -117,7 +149,7 @@
                             </Grid.RowDefinitions>
                             <Label Grid.Column="0" Width="18" Content="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListViewItem}}, Converter={StaticResource OrdinalConverter}}"/>
                             <TextBox Grid.Column="1" Text="{Binding Path=Address}"/>
-                            <TextBox Grid.Column="2" Text="{Binding Path=Time}"/>
+                            <TextBox Grid.Column="2" Text="{Binding Path=Time, Converter={StaticResource LocalTimeToStringConverter}}"/>
                         </Grid>
                     </DataTemplate>
                 </ListView.ItemTemplate>

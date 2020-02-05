@@ -28,7 +28,14 @@ namespace LogisticsProgram
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             var stime = (string)value;
-            return LocalTimePattern.Create("HH:mm", CultureInfo.InvariantCulture).Parse(stime).Value;
+            try
+            {
+                return LocalTimePattern.Create("HH:mm", CultureInfo.InvariantCulture).Parse(stime).Value;
+            }
+            catch (UnparsableValueException)
+            {
+                return null;
+            }
         }
     }
 }
