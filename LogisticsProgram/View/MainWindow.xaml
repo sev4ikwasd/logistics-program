@@ -34,7 +34,15 @@
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
                 <Label Grid.Column="0" Grid.Row="0" Content="Введите стартовую позицию:"/>
-                <TextBox Grid.Column="1" Grid.Row="0" Text="{Binding Path=StartAddress}" Name="StartAddress"/>
+                <TextBox Grid.Column="1" Grid.Row="0" Name="StartAddress">
+                    <TextBox.Text>
+                        <Binding Path="StartPosition.Address.StringAddressValue" Mode="TwoWay">
+                            <Binding.ValidationRules>
+                                <DataErrorValidationRule/>
+                            </Binding.ValidationRules>
+                        </Binding>
+                    </TextBox.Text>
+                </TextBox>
             </Grid>
         </Border>
         <Border Grid.Column="0" Grid.Row="1" BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Stretch" Margin="10,10,10,5">
@@ -49,7 +57,7 @@
                 <Label Grid.Column="0" Grid.Row="0" Content="Введите стартовое время:"/>
                 <TextBox Grid.Column="1" Grid.Row="0" Name="StartTime">
                     <TextBox.Text>
-                        <Binding Path="StartTime">
+                        <Binding Path="StartPosition.Time">
                             <Binding.ValidationRules>
                                 <ExceptionValidationRule/>
                             </Binding.ValidationRules>
@@ -90,7 +98,16 @@
                                 <Grid.RowDefinitions>
                                     <RowDefinition/>
                                 </Grid.RowDefinitions>
-                                <TextBox Grid.Column="0" Text="{Binding Path=Address}"/>
+                                <TextBox Grid.Column="0">
+                                    <TextBox.Text>
+                                        <Binding Path="Address.StringAddressValue" Mode="TwoWay">
+                                            <Binding.ValidationRules>
+                                                <!--<ExceptionValidationRule/>-->
+                                                <DataErrorValidationRule/>
+                                            </Binding.ValidationRules>
+                                        </Binding>
+                                    </TextBox.Text>
+                                </TextBox>
                                 <TextBox Grid.Column="1">
                                     <TextBox.Text>
                                         <Binding Path="Time">

@@ -9,8 +9,10 @@ namespace LogisticsProgram
 {
     public class Position : IComparable<Position>
     {
-        private String address = "";
-        public String Address {
+        private Address address = new Address();
+
+        public Address Address
+        {
             get
             {
                 return address;
@@ -33,6 +35,13 @@ namespace LogisticsProgram
             }
         }
 
+        public Position() { }
+        public Position(Address address, LocalTime time)
+        {
+            this.address = address;
+            this.time = time;
+        }
+
         public int CompareTo(Position position)
         {
             return time.CompareTo(position.Time);
@@ -48,7 +57,7 @@ namespace LogisticsProgram
         public override int GetHashCode()
         {
             var hashCode = -242955985;
-            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(address);
+            hashCode = hashCode * -1521134295 + address.GetHashCode();
             hashCode = hashCode * -1521134295 + time.GetHashCode();
             return hashCode;
         }

@@ -11,29 +11,16 @@ namespace LogisticsProgram
 {
     public class MainModel : BindableBase
     {
-        private String startAddress = "";
-        public String StartAddress
+        private Position startPosition = new Position();
+        public Position StartPosition
         {
             get
             {
-                return startAddress;
+                return startPosition;
             }
             set
             {
-                startAddress = value;
-            }
-        }
-
-        private LocalTime startTime = new LocalTime();
-        public LocalTime StartTime
-        {
-            get
-            {
-                return startTime;
-            }
-            set
-            {
-                startTime = value;
+                startPosition = value;
             }
         }
 

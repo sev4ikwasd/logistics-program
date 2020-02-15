@@ -10,13 +10,7 @@ namespace LogisticsProgram
     public class Route
     {
         private readonly ObservableCollection<Position> positions = new ObservableCollection<Position>();
-        public ObservableCollection<Position> Positions
-        {
-            get
-            {
-                return positions;
-            }
-        }
+        public ObservableCollection<Position> Positions => positions;
 
         public override bool Equals(object obj)
         {

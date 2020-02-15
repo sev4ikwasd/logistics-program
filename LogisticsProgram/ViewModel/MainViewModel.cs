@@ -16,26 +16,15 @@ namespace LogisticsProgram
     {
         private readonly MainModel model = new MainModel();
 
-        public String StartAddress
+        public Position StartPosition
         {
             get
             {
-                return model.StartAddress;
+                return model.StartPosition;
             }
             set
             {
-                model.StartAddress = value;
-            }
-        }
-        public LocalTime StartTime
-        {
-            get
-            {
-                return model.StartTime;
-            }
-            set
-            {
-                model.StartTime = value;
+                model.StartPosition = value;
             }
         }
         public ObservableCollection<Position> Positions
@@ -98,7 +87,7 @@ namespace LogisticsProgram
                 model.Positions.Remove(item);
             });
             GenerateRouteCommand = new DelegateCommand(() => {
-                if(!String.IsNullOrEmpty(model.StartAddress) && (model.Positions.Count > 0))
+                if(!String.IsNullOrEmpty(model.StartPosition.Address.AddressValue) && (model.Positions.Count > 0))
                     model.GenerateRoute();
             });
         }

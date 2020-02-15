@@ -20,7 +20,7 @@ namespace LogisticsProgramTests
         [TestMethod]
         public void GenerateTest()
         {
-            model.StartAddress = "test";
+            /*model.StartPosition.Address = "test";
             Position pos1 = new Position();
             pos1.Address = "Test1";
             //pos1.Time = DateTime.ParseExact("14:00", "HH:mm", null);
@@ -37,7 +37,23 @@ namespace LogisticsProgramTests
             checkRoute.Positions.Add(pos2);
             checkRoute.Positions.Add(pos1);
 
-            Assert.IsTrue(route.Equals(checkRoute));
+            Assert.IsTrue(route.Equals(checkRoute));*/
+        }
+
+        [TestMethod]
+        public void AddressTest()
+        {
+            Address address = new Address();
+            address.StringAddressValue = "мосфильмовская 74";
+            Assert.AreEqual("55.71054:37.50511", address.AddressValue);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(Address.AddressException))]
+        public void WrongAddressTest()
+        {
+            Address address = new Address();
+            address.StringAddressValue = "мghuasfgdghlaksdflg";
         }
     }
 }
