@@ -13,7 +13,7 @@ namespace LogisticsProgram
 {
     public class Address : BindableBase, IDataErrorInfo
     {
-        private HttpClient client;
+        private HttpClient client = new HttpClient();
 
         private bool isAddressValid = true;
 
@@ -52,11 +52,6 @@ namespace LogisticsProgram
             }
         }
 
-        public Address()
-        {
-            client = new HttpClient();
-        }
-
         private async Task<String> GetAddressFromApi(String value)
         {
             String result = "";
@@ -71,7 +66,7 @@ namespace LogisticsProgram
                 {
                     String lat = N["results"][0]["position"]["lat"].Value;
                     String lon = N["results"][0]["position"]["lon"].Value;
-                    result = $"{lat}:{lon}";
+                    result = $"{lat},{lon}";
                 }
             }
 

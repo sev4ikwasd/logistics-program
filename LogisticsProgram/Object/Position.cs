@@ -23,43 +23,50 @@ namespace LogisticsProgram
             }
         }
 
-        private LocalTime time = new LocalTime();
-        public LocalTime Time {
+        private LocalTime timeFrom = new LocalTime();
+        public LocalTime TimeFrom {
             get
             {
-                return time;
+                return timeFrom;
             }
             set
             {
-                time = value;
+                timeFrom = value;
+            }
+        }
+
+        private LocalTime timeTo = new LocalTime();
+        public LocalTime TimeTo
+        {
+            get
+            {
+                return timeTo;
+            }
+            set
+            {
+                timeTo = value;
             }
         }
 
         public Position() { }
-        public Position(Address address, LocalTime time)
+        public Position(Address address, LocalTime timeFrom, LocalTime timeTo)
         {
             this.address = address;
-            this.time = time;
+            this.timeFrom = timeFrom;
+            this.timeTo = timeTo;
         }
 
         public int CompareTo(Position position)
         {
-            return time.CompareTo(position.Time);
+            return timeFrom.CompareTo(position.TimeFrom);
         }
 
         public override bool Equals(object obj)
         {
             return obj is Position position &&
-                   address == position.address &&
-                   time == position.time;
-        }
-
-        public override int GetHashCode()
-        {
-            var hashCode = -242955985;
-            hashCode = hashCode * -1521134295 + address.GetHashCode();
-            hashCode = hashCode * -1521134295 + time.GetHashCode();
-            return hashCode;
+                   address == position.Address &&
+                   timeFrom == position.TimeFrom &&
+                   timeTo == position.TimeTo;
         }
     }
 }

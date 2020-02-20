@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.ObjectModel;
 using System.Globalization;
@@ -55,5 +56,21 @@ namespace LogisticsProgramTests
             Address address = new Address();
             address.StringAddressValue = "мghuasfgdghlaksdflg";
         }
+
+        /*[TestMethod]
+        public void TestFindingShortestWay()
+        {
+            Position startPos = new Position(null, new LocalTime(), new LocalTime(7, 0));
+            Position pos1 = new Position(null, new LocalTime(9, 0), new LocalTime(9, 30));
+            Position pos2 = new Position(null, new LocalTime(15, 0), new LocalTime(15, 30));
+            Position pos3 = new Position(null, new LocalTime(18, 0), new LocalTime(18, 30));
+
+            List<Position> positions = new List<Position> {startPos, pos1, pos2, pos3};
+            List<MainModel.Path> paths = new List<MainModel.Path> {new MainModel.Path(startPos, pos1, Period.FromMinutes(100)), new MainModel.Path(startPos, pos2, Period.FromMinutes(120)), new MainModel.Path(startPos, pos3, Period.FromMinutes(120)), new MainModel.Path(pos1, pos2, Period.FromMinutes(100)), new MainModel.Path(pos1, pos3, Period.FromMinutes(240)), new MainModel.Path(pos2, pos3, Period.FromMinutes(180))};
+            List<MainModel.Path> actualPaths = model.AddReversePaths(paths);
+            List<Position> result = model.FindShortestPossibleWay(actualPaths, startPos, new List<Position>(), startPos.TimeTo);
+            List<Position> expectedResult = new List<Position>{startPos, pos1, pos2, pos3};
+            CollectionAssert.AreEqual(result, expectedResult);
+        }*/
     }
 }
