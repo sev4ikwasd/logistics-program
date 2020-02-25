@@ -5,19 +5,18 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:LogisticsProgram"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800"
+        Title="Логистическая программа" Height="600" Width="1000"
         x:Name="MainWindowName">
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
         <local:LocalTimeToStringConverter x:Key="LocalTimeToStringConverter"/>
+        <local:PeriodToStringConverter x:Key="PeriodToStringConverter"/>
     </Window.Resources>
     <Window.DataContext>
         <local:MainViewModel/>
     </Window.DataContext>
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
@@ -28,12 +27,17 @@
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
-                <Label Grid.Column="0" Grid.Row="0" Content="Введите стартовую позицию:"/>
+                <Label Grid.Column="0" Grid.Row="0" Content="Стартовая позиция:"/>
                 <TextBox Grid.Column="1" Grid.Row="0" Name="StartAddress">
                     <TextBox.Text>
                         <Binding Path="StartPosition.Address.StringAddressValue" Mode="TwoWay">
@@ -43,21 +47,10 @@
                         </Binding>
                     </TextBox.Text>
                 </TextBox>
-            </Grid>
-        </Border>
-        <Border Grid.Column="0" Grid.Row="1" BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Stretch" Margin="10,10,10,5">
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition/>
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition/>
-                </Grid.ColumnDefinitions>
-                <Label Grid.Column="0" Grid.Row="0" Content="Введите стартовое время:"/>
-                <TextBox Grid.Column="1" Grid.Row="0" Name="StartTime">
+                <Label Grid.Column="0" Grid.Row="1" Content="Стартовое время:"/>
+                <TextBox Grid.Column="1" Grid.Row="1" Name="StartTime">
                     <TextBox.Text>
-                        <Binding Path="StartPosition.Time">
+                        <Binding Path="StartPosition.TimeTo">
                             <Binding.ValidationRules>
                                 <ExceptionValidationRule/>
                             </Binding.ValidationRules>
@@ -67,22 +60,22 @@
                         </Binding>
                     </TextBox.Text>
                 </TextBox>
-            </Grid>
-        </Border>
-        <Border Grid.Row="2" BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Stretch" Margin="10,5,10,10" Height="Auto">
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition/>
-                    <RowDefinition/>
-                    <RowDefinition/>
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition/>
-                    <ColumnDefinition/>
-                </Grid.ColumnDefinitions>
-                <Label Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Content="Введите точки маршрута:"/>
-                <ListView Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" BorderBrush="Transparent" x:Name="Positions" ItemsSource="{Binding Positions}">
-                    <ListView.ItemContainerStyle>
+                <Label Grid.Column="0" Grid.Row="2" Content="Задержка на точках (мин.):"/>
+                <TextBox Grid.Column="1" Grid.Row="2" Name="DelayTime">
+                    <TextBox.Text>
+                        <Binding Path="DelayPeriod">
+                            <Binding.ValidationRules>
+                                <ExceptionValidationRule/>
+                            </Binding.ValidationRules>
+                            <Binding.Converter>
+                                <local:PeriodToStringConverter/>
+                            </Binding.Converter>
+                        </Binding>
+                    </TextBox.Text>
+                </TextBox>
+                <Label Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="3" Content="Введите точки маршрута:"/>
+                <ListView Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="4" HorizontalAlignment="Stretch" BorderBrush="Transparent" x:Name="Positions" ItemsSource="{Binding Positions}" SizeChanged="Positions_OnSizeChanged" Height="200">
+                    <!--<ListView.ItemContainerStyle>
                         <Style TargetType="ListViewItem">
                             <Setter Property="HorizontalContentAlignment" Value="Stretch" />
                         </Style>
@@ -102,7 +95,6 @@
                                     <TextBox.Text>
                                         <Binding Path="Address.StringAddressValue" Mode="TwoWay">
                                             <Binding.ValidationRules>
-                                                <!--<ExceptionValidationRule/>-->
                                                 <DataErrorValidationRule/>
                                             </Binding.ValidationRules>
                                         </Binding>
@@ -123,10 +115,82 @@
                                 <Button Grid.Column="2" Content="-" Width="18" Command="{Binding DataContext.RemovePositionCommand, ElementName=MainWindowName}" CommandParameter="{Binding Path=.}"/>
                             </Grid>
                         </DataTemplate>
-                    </ListView.ItemTemplate>
+                    </ListView.ItemTemplate>-->
+                    <ListView.ItemContainerStyle>
+                        <Style TargetType="ListViewItem">
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                        </Style>
+                    </ListView.ItemContainerStyle>
+                    <ListView.View>
+                        <GridView AllowsColumnReorder="False">
+                            <GridView.ColumnHeaderContainerStyle>
+                                <Style BasedOn="{StaticResource {x:Type GridViewColumnHeader}}" TargetType="{x:Type GridViewColumnHeader}">
+                                    <Setter Property="IsHitTestVisible" Value="False"/>
+                                </Style>
+                            </GridView.ColumnHeaderContainerStyle>
+                            <GridViewColumn Header="Адрес">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBox Margin="-5, 0, -5, 0">
+                                            <TextBox.Text>
+                                                <Binding Path="Address.StringAddressValue" Mode="TwoWay">
+                                                    <Binding.ValidationRules>
+                                                        <DataErrorValidationRule/>
+                                                    </Binding.ValidationRules>
+                                                </Binding>
+                                            </TextBox.Text>
+                                        </TextBox>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                            <GridViewColumn Header="Отгрузка от">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBox Margin="-5, 0, -5, 0" TextAlignment="Right">
+                                            <TextBox.Text>
+                                                <Binding Path="TimeFrom">
+                                                    <Binding.ValidationRules>
+                                                        <ExceptionValidationRule/>
+                                                    </Binding.ValidationRules>
+                                                    <Binding.Converter>
+                                                        <local:LocalTimeToStringConverter/>
+                                                    </Binding.Converter>
+                                                </Binding>
+                                            </TextBox.Text>
+                                        </TextBox>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                            <GridViewColumn Header="Отгрузка до">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBox Margin="-5, 0, -5, 0" TextAlignment="Right">
+                                            <TextBox.Text>
+                                                <Binding Path="TimeTo">
+                                                    <Binding.ValidationRules>
+                                                        <ExceptionValidationRule/>
+                                                    </Binding.ValidationRules>
+                                                    <Binding.Converter>
+                                                        <local:LocalTimeToStringConverter/>
+                                                    </Binding.Converter>
+                                                </Binding>
+                                            </TextBox.Text>
+                                        </TextBox>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                            <GridViewColumn>
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Button Content="-" Width="Auto" Margin="-5, 0, -5, 0" Command="{Binding DataContext.RemovePositionCommand, ElementName=MainWindowName}" CommandParameter="{Binding Path=.}"/>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                        </GridView>
+                    </ListView.View>
                 </ListView>
-                <Button Grid.Row="2" Grid.Column="0" Content="+" HorizontalAlignment="Left" Margin="7, 0, 0, 5" Width="18" Command="{Binding Path=AddPositionCommand}"/>
-                <Button Grid.Row="2" Grid.Column="1" Content="Сгенерировать маршрут" HorizontalAlignment="Right" Margin="0, 0, 7, 5" Padding="5, 0, 5, 0" Command="{Binding Path=GenerateRouteCommand}">
+                <Button Grid.Column="0" Grid.Row="5" Content="+" HorizontalAlignment="Left" Margin="7, 0, 0, 5" Width="18" Command="{Binding Path=AddPositionCommand}"/>
+                <Button Grid.Column="1" Grid.Row="5" Content="Сгенерировать маршрут" HorizontalAlignment="Right" Margin="0, 0, 7, 5" Padding="5, 0, 5, 0" Command="{Binding Path=GenerateRouteCommand}">
                     <Button.Style>
                         <Style TargetType="Button">
                             <Setter Property="IsEnabled" Value="False"/>
@@ -143,8 +207,8 @@
                 </Button>
             </Grid>
         </Border>
-        <Border Grid.Row="3" BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Stretch" Margin="10,5,10,10" Height="Auto" Visibility="{Binding RouteVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
-            <ListView Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" BorderBrush="Transparent" ItemsSource="{Binding Route.Positions}" Name="Route">
+        <Border Grid.Row="1" BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Stretch" Margin="10,5,10,10" Height="Auto" Visibility="{Binding RouteVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <ListView BorderBrush="Transparent" ItemsSource="{Binding Route.Positions}" Name="Route">
                 <ListView.ItemContainerStyle>
                     <Style TargetType="ListViewItem">
                         <Setter Property="HorizontalContentAlignment" Value="Stretch" />

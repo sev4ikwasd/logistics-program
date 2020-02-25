@@ -11,16 +11,16 @@ using NodaTime.Text;
 
 namespace LogisticsProgram
 {
-    class LocalTimeToStringConverter : IValueConverter
+    public class PeriodToStringConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             try
             {
-                var time = (LocalTime)value;
-                return time.ToString("HH:mm", CultureInfo.InvariantCulture);
+                var period = (Period) value;
+                return period.Minutes.ToString();
             }
-            catch (System.InvalidCastException)
+            catch (UnparsableValueException)
             {
                 return DependencyProperty.UnsetValue;
             }
@@ -30,10 +30,11 @@ namespace LogisticsProgram
         {
             try
             {
-                var stime = (String)value;
-                return LocalTimePattern.Create("HH:mm", CultureInfo.InvariantCulture).Parse(stime).Value;
+                var speriod = (String) value;
+                var intperiod = int.Parse(speriod);
+                return Period.FromMinutes(intperiod);
             }
-            catch (UnparsableValueException)
+            catch (FormatException)
             {
                 return DependencyProperty.UnsetValue;
             }

@@ -27,6 +27,18 @@ namespace LogisticsProgram
                 model.StartPosition = value;
             }
         }
+
+        public Period DelayPeriod
+        {
+            get
+            {
+                return model.DelayPeriod;
+            }
+            set
+            {
+                model.DelayPeriod = value;
+            }
+        }
         public ObservableCollection<Position> Positions
         {
             get

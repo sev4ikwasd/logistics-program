@@ -28,17 +28,17 @@ namespace LogisticsProgram
             }
         }
 
-        private Period delayTime = (new PeriodBuilder()).Build();
+        private Period delayPeriod = Period.FromMinutes(0);
 
-        public Period DelayTime
+        public Period DelayPeriod
         {
             get
             {
-                return delayTime;
+                return delayPeriod;
             }
             set
             {
-                delayTime = value;
+                delayPeriod = value;
             }
         }
 
@@ -62,6 +62,7 @@ namespace LogisticsProgram
 
         public async Task GenerateRoute()
         {
+            route.Positions.Clear();
             List<Position> fullPositions = new List<Position>(positions);
             fullPositions.Add(StartPosition);
             List<Path> paths = await GetDistancesFromApi(fullPositions);
@@ -70,7 +71,7 @@ namespace LogisticsProgram
             List<Path> actualPaths = AddReversePaths(paths);
             List<Position> way =
                 FindShortestPossibleWay(actualPaths, StartPosition, new List<Position>(), startPosition.TimeTo);
-            Route route = new Route();
+            way.RemoveAt(0);
             route.Positions.AddRange(way);
             RaisePropertyChanged("Route");
         }
@@ -105,7 +106,7 @@ namespace LogisticsProgram
                             {
                                 currentTimePassed = nextPath.toPosition.TimeFrom;
                             }
-                            currentTimePassed = currentTimePassed.Plus(delayTime);
+                            currentTimePassed = currentTimePassed.Plus(delayPeriod);
                             List<Position> newVisitedPositions = new List<Position>(visitedPositions);
                             List<Position> nextWay = FindShortestPossibleWay(paths, nextPath.toPosition,
                                 newVisitedPositions, currentTimePassed);
