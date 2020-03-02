@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Globalization;
+using System.Windows.Input;
 using Prism.Mvvm;
 using Prism.Commands;
 using NodaTime;
@@ -102,9 +103,17 @@ namespace LogisticsProgram
                 if(!String.IsNullOrEmpty(model.StartPosition.Address.AddressValue) && (model.Positions.Count > 0))
                     model.GenerateRoute();
             });
+            AddressChosenCommand = new DelegateCommand<object[]>((objects =>
+            {
+                var position = objects[0] as Position;
+                var addressVariant = objects[1] as Address.AddressVariant;
+                if ((position != null) && (addressVariant != null))
+                    position.Address.SetAddressVariant(addressVariant);
+            }));
         }
         public DelegateCommand AddPositionCommand { get; }
         public DelegateCommand<Position> RemovePositionCommand { get; }
         public DelegateCommand GenerateRouteCommand { get; }
+        public DelegateCommand<object[]> AddressChosenCommand { get; }
     }
 }
