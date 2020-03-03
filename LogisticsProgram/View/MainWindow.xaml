@@ -6,7 +6,7 @@
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:local="clr-namespace:LogisticsProgram"
         mc:Ignorable="d"
-        Title="Логистическая программа" Height="600" Width="1000"
+        Title="Логистическая программа" Height="650" Width="1000"
         x:Name="MainWindowName">
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
@@ -129,7 +129,7 @@
                             <GridViewColumn Header="Адрес">
                                 <GridViewColumn.CellTemplate>
                                     <DataTemplate>
-                                        <DockPanel>
+                                        <DockPanel Margin="-5, 0, -5, 0">
                                             <TextBox x:Name="tb" HorizontalAlignment="Stretch" Width="{Binding ActualWidth, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DockPanel}}}">
                                                 <TextBox.Text>
                                                     <Binding Path="Address.StringAddressValue" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
@@ -183,7 +183,7 @@
                                     <DataTemplate>
                                         <TextBox Margin="-5, 0, -5, 0" TextAlignment="Right">
                                             <TextBox.Text>
-                                                <Binding Path="TimeFrom">
+                                                <Binding Path="TimeFrom" UpdateSourceTrigger="PropertyChanged">
                                                     <Binding.ValidationRules>
                                                         <ExceptionValidationRule/>
                                                     </Binding.ValidationRules>
@@ -201,7 +201,7 @@
                                     <DataTemplate>
                                         <TextBox Margin="-5, 0, -5, 0" TextAlignment="Right">
                                             <TextBox.Text>
-                                                <Binding Path="TimeTo">
+                                                <Binding Path="TimeTo" UpdateSourceTrigger="PropertyChanged">
                                                     <Binding.ValidationRules>
                                                         <ExceptionValidationRule/>
                                                     </Binding.ValidationRules>
@@ -243,33 +243,39 @@
             </Grid>
         </Border>
         <Border Grid.Row="1" BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Stretch" Margin="10,5,10,10" Height="Auto" Visibility="{Binding RouteVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
-            <ListView BorderBrush="Transparent" ItemsSource="{Binding Route.Positions}" Name="Route">
-                <ListView.ItemContainerStyle>
-                    <Style TargetType="ListViewItem">
-                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                    </Style>
-                </ListView.ItemContainerStyle>
-                <ListView.Resources>
-                    <local:OrdinalConverter x:Key="OrdinalConverter" />
-                </ListView.Resources>
-                <ListView.ItemTemplate>
-                    <DataTemplate>
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="2*"/>
-                                <ColumnDefinition Width="1*"/>
-                            </Grid.ColumnDefinitions>
-                            <Grid.RowDefinitions>
-                                <RowDefinition/>
-                            </Grid.RowDefinitions>
-                            <Label Grid.Column="0" Width="18" Content="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListViewItem}}, Converter={StaticResource OrdinalConverter}}"/>
-                            <TextBox Grid.Column="1" Text="{Binding Path=Address}"/>
-                            <TextBox Grid.Column="2" Text="{Binding Path=Time, Converter={StaticResource LocalTimeToStringConverter}}"/>
-                        </Grid>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <Label Grid.Column="0" Grid.Row="0" Content="Сгенерированный маршрут:"/>
+                <ListView  Grid.Column="0" Grid.Row="1" BorderBrush="Transparent" ItemsSource="{Binding Route.Positions}" Name="Route" SizeChanged="Route_OnSizeChanged" Height="200">
+                    <ListView.ItemContainerStyle>
+                        <Style TargetType="ListViewItem">
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                        </Style>
+                    </ListView.ItemContainerStyle>
+                    <ListView.Resources>
+                        <local:OrdinalConverter x:Key="OrdinalConverter" />
+                    </ListView.Resources>
+                    <ListView.View>
+                        <GridView AllowsColumnReorder="False">
+                            <GridView.ColumnHeaderContainerStyle>
+                                <Style BasedOn="{StaticResource {x:Type GridViewColumnHeader}}" TargetType="{x:Type GridViewColumnHeader}">
+                                    <Setter Property="IsHitTestVisible" Value="False"/>
+                                </Style>
+                            </GridView.ColumnHeaderContainerStyle>
+                            <GridViewColumn Header="№" DisplayMemberBinding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListViewItem}}, Converter={StaticResource OrdinalConverter}}"/>
+                            <GridViewColumn Header="Адрес" DisplayMemberBinding="{Binding Path=Address.StringAddressValue}"/>
+                            <GridViewColumn Header="Отгрузка от" DisplayMemberBinding="{Binding Path=TimeFrom, Converter={StaticResource LocalTimeToStringConverter}}"/>
+                            <GridViewColumn Header="Отгрузка до" DisplayMemberBinding="{Binding Path=TimeTo, Converter={StaticResource LocalTimeToStringConverter}}"/>
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+            </Grid>
         </Border>
     </Grid>
 </Window>

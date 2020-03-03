@@ -76,7 +76,7 @@ namespace LogisticsProgram
         }
 
         public MainViewModel()
-        {//TODO validation
+        {
             model.PropertyChanged += (s, e) => {
                 RaisePropertyChanged(e.PropertyName);
                 if (e.PropertyName.Equals("Route"))
@@ -90,6 +90,27 @@ namespace LogisticsProgram
                         RouteVisible = false;
                     }
                     RaisePropertyChanged("RouteVisible");
+                }
+
+                if (e.PropertyName.Equals("Position_TimeFrom"))
+                {
+                    foreach (Position position in model.Positions)
+                    {
+                        if (position.TimeFrom > position.TimeTo)
+                        {
+                            position.TimeTo = position.TimeFrom;
+                        }
+                    }
+                }
+                if (e.PropertyName.Equals("Position_TimeTo"))
+                {
+                    foreach (Position position in model.Positions)
+                    {
+                        if (position.TimeTo < position.TimeFrom)
+                        {
+                            position.TimeFrom = position.TimeTo;
+                        }
+                    }
                 }
             };
 

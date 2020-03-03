@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
@@ -25,6 +27,7 @@ namespace LogisticsProgram
             set
             {
                 startPosition = value;
+                RaisePropertyChanged("StartPosition");
             }
         }
 
@@ -58,6 +61,40 @@ namespace LogisticsProgram
             {
                 return route;
             }
+        }
+
+        public MainModel()
+        {
+            positions.CollectionChanged += (s, a) =>
+            {
+                if (a.Action == NotifyCollectionChangedAction.Remove)
+                {
+                    foreach (Position item in a.OldItems)
+                    {
+                        item.PropertyChanged -= PositionChanged;
+                    }
+                }
+                else if (a.Action == NotifyCollectionChangedAction.Add)
+                {
+                    foreach (Position item in a.NewItems)
+                    {
+                        item.PropertyChanged += PositionChanged;
+                    }
+                }
+            };
+        }
+        private void PositionChanged(object sender, PropertyChangedEventArgs e)
+        {
+            String propertyName = "";
+            if (e.PropertyName.Equals("TimeFrom"))
+            {
+                propertyName = "Position_TimeFrom";
+            }
+            else if (e.PropertyName.Equals("TimeTo"))
+            {
+                propertyName = "Position_TimeTo";
+            }
+            RaisePropertyChanged(propertyName);
         }
 
         public async Task GenerateRoute()

@@ -41,5 +41,22 @@ namespace LogisticsProgram
             gView.Columns[2].Width = col3;
             gView.Columns[3].Width = col4;
         }
+
+        private void Route_OnSizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            ListView listView = sender as ListView;
+            GridView gView = listView.View as GridView;
+
+            var workingWidth = listView.ActualWidth - 2 * SystemParameters.VerticalScrollBarWidth;
+            var col1 = 20;
+            var col3 = 80;
+            var col4 = 80;
+            var col2 = workingWidth - col1 - col3 - col4;
+
+            gView.Columns[0].Width = col1;
+            gView.Columns[1].Width = col2;
+            gView.Columns[2].Width = col3;
+            gView.Columns[3].Width = col4;
+        }
     }
 }

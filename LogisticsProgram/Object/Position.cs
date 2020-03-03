@@ -4,10 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using NodaTime;
+using Prism.Mvvm;
 
 namespace LogisticsProgram
 {
-    public class Position : IComparable<Position>
+    public class Position : BindableBase, IComparable<Position>
     {
         private Address address = new Address();
 
@@ -32,6 +33,7 @@ namespace LogisticsProgram
             set
             {
                 timeFrom = value;
+                RaisePropertyChanged("TimeFrom");
             }
         }
 
@@ -45,6 +47,7 @@ namespace LogisticsProgram
             set
             {
                 timeTo = value;
+                RaisePropertyChanged("TimeTo");
             }
         }
 
