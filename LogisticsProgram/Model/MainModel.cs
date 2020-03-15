@@ -15,7 +15,6 @@ namespace LogisticsProgram
 {
     public class MainModel : BindableBase
     {
-        private HttpClient client = new HttpClient();
 
         private Position startPosition = new Position();
         public Position StartPosition
@@ -214,7 +213,8 @@ namespace LogisticsProgram
                     if (fromPosition != toPosition)
                     {
                         Period timeBetween;
-                        HttpResponseMessage response = await client.GetAsync($"https://api.tomtom.com/routing/1/calculateRoute/{fromPosition.Address.AddressValue}:{toPosition.Address.AddressValue}/json?maxAlternatives=1&key=rOwvGPEEBP70iDS2ohHSlqzBF1sp8d7z");
+                        HttpResponseMessage response = await ApiUtility.GetInstance()
+                            .GetRoute(fromPosition.Address.AddressValue, toPosition.Address.AddressValue);
                         if (response.IsSuccessStatusCode)
                         {
                             String strResponse = await response.Content.ReadAsStringAsync();

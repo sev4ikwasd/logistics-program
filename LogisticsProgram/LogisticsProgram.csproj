@@ -86,6 +86,7 @@
     <Compile Include="Object\Address.cs" />
     <Compile Include="Object\Position.cs" />
     <Compile Include="Object\Route.cs" />
+    <Compile Include="Utility\ApiUtility.cs" />
     <Compile Include="Utility\AsyncObservableCollection.cs" />
     <Compile Include="Utility\BasicMultiBindingConverter.cs" />
     <Compile Include="Utility\LocalTimeToStringConverter.cs" />
