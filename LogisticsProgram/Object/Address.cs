@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Prism.Mvvm;
 using SimpleJSON;
@@ -15,6 +16,15 @@ namespace LogisticsProgram
     public class Address : BindableBase, IDataErrorInfo
     {
         private bool isAddressValid = true;
+
+        public bool IsAddressValid
+        {
+            get
+            {
+                return isAddressValid;
+
+            }
+        }
 
         private String stringAddressValue = "";
         public String StringAddressValue
@@ -36,6 +46,14 @@ namespace LogisticsProgram
             get
             {
                 return addressValue;
+            }
+            set
+            {
+                Regex latlon = new Regex(@"(^(([-]?)\d+(\.\d+)),(([-]?)\d+(\.\d+))$)");
+                if (latlon.IsMatch(value))
+                    addressValue = value;
+                else
+                    throw new FormatException("Given string isn't coordinates");
             }
         }
 
@@ -60,7 +78,6 @@ namespace LogisticsProgram
                 if (N["results"].Count > 0)
                 {
                     addressVariants.Clear();
-                    //isAddressValid = true;
                     for (int i = 0; i < N["results"].Count; i++)
                     {
                         String freeFormAddress = N["results"][i]["address"]["freeformAddress"];
@@ -100,11 +117,6 @@ namespace LogisticsProgram
                 StringAddressValue = stringAddressValue;
                 AddressValue = addressValue;
             }
-        }
-
-        public class AddressException : Exception
-        {
-            public AddressException(string message) : base(message) { }
         }
 
         public string this[string columnName]

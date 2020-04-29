@@ -21,27 +21,25 @@ namespace LogisticsProgramTests
         [TestMethod]
         public void GenerateTest()
         {
-            /*model.StartPosition.Address = "test";
+            model.StartPosition.Address.AddressValue = "55.88318,37.51557";
+            model.StartPosition.TimeFrom = LocalTimePattern.Create("HH:mm", CultureInfo.InvariantCulture).Parse("07:00").Value;
+            model.StartPosition.TimeTo = LocalTimePattern.Create("HH:mm", CultureInfo.InvariantCulture).Parse("20:00").Value;
+            model.AmountOfVehicles = 2;
+            model.DelayPeriod = Period.FromMinutes(30);
             Position pos1 = new Position();
-            pos1.Address = "Test1";
-            //pos1.Time = DateTime.ParseExact("14:00", "HH:mm", null);
-            pos1.Time = LocalTimePattern.Create("HH:mm", CultureInfo.InvariantCulture).Parse("14:00").Value;
+            pos1.Address.AddressValue = "55.70985,37.50378";
+            pos1.TimeFrom = LocalTimePattern.Create("HH:mm", CultureInfo.InvariantCulture).Parse("10:00").Value;
+            pos1.TimeTo = LocalTimePattern.Create("HH:mm", CultureInfo.InvariantCulture).Parse("12:00").Value;
             model.Positions.Add(pos1);
             Position pos2 = new Position();
-            pos2.Address = "Test2";
-            //pos2.Time = DateTime.ParseExact("13:00", "HH:mm", null);
-            pos2.Time = LocalTimePattern.Create("HH:mm", CultureInfo.InvariantCulture).Parse("13:00").Value;
+            pos2.Address.AddressValue = "55.72325,37.52783";
+            pos2.TimeFrom = LocalTimePattern.Create("HH:mm", CultureInfo.InvariantCulture).Parse("18:00").Value;
+            pos2.TimeTo = LocalTimePattern.Create("HH:mm", CultureInfo.InvariantCulture).Parse("19:00").Value;
             model.Positions.Add(pos2);
-            Route route = model.GenerateRoute();
-
-            Route checkRoute = new Route();
-            checkRoute.Positions.Add(pos2);
-            checkRoute.Positions.Add(pos1);
-
-            Assert.IsTrue(route.Equals(checkRoute));*/
+            model.GenerateRoute().GetAwaiter().GetResult();
         }
 
-        [TestMethod]
+        /*[TestMethod]
         public void AddressTest()
         {
             Address address = new Address();
@@ -55,7 +53,7 @@ namespace LogisticsProgramTests
         {
             Address address = new Address();
             address.StringAddressValue = "мghuasfgdghlaksdflg";
-        }
+        }*/
 
         /*[TestMethod]
         public void TestFindingShortestWay()

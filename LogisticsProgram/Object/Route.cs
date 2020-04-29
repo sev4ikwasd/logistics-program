@@ -9,8 +9,27 @@ namespace LogisticsProgram
 {
     public class Route
     {
+        private int vehicleId;
+
+        public int VehicleId
+        {
+            get
+            {
+                return vehicleId;
+            }
+            set
+            {
+                vehicleId = value;
+            }
+        }
+
         private readonly ObservableCollection<Position> positions = new ObservableCollection<Position>();
         public ObservableCollection<Position> Positions => positions;
+
+        public Route(int vehicleId)
+        {
+            this.vehicleId = vehicleId;
+        }
 
         public override bool Equals(object obj)
         {

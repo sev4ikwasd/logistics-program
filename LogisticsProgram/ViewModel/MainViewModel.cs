@@ -40,6 +40,23 @@ namespace LogisticsProgram
                 model.DelayPeriod = value;
             }
         }
+
+        public int AmountOfVehicles
+        {
+            get
+            {
+                return model.AmountOfVehicles;
+            }
+            set
+            {
+                if (value <= 0)
+                {
+                    throw new FormatException("Amount of vehicles should be greater than zero");
+                }
+                model.AmountOfVehicles = value;
+            }
+        }
+
         public ObservableCollection<Position> Positions
         {
             get
@@ -51,27 +68,27 @@ namespace LogisticsProgram
 
             }
         }
-        public Route Route
+        public ObservableCollection<Route> Routes
         {
             get
             {
-                return model.Route;
+                return model.Routes;
             }
             set
             {
 
             }
         }
-        private Boolean routeVisible = false;
-        public Boolean RouteVisible
+        private Boolean routesVisible = false;
+        public Boolean RoutesVisible
         {
             get
             {
-                return routeVisible;
+                return routesVisible;
             }
             set
             {
-                routeVisible = value;
+                routesVisible = value;
             }
         }
 
@@ -79,19 +96,48 @@ namespace LogisticsProgram
         {
             model.PropertyChanged += (s, e) => {
                 RaisePropertyChanged(e.PropertyName);
-                if (e.PropertyName.Equals("Route"))
+                if (e.PropertyName.Equals("Routes"))
                 {
-                    if (model.Route.Positions.Count != 0)
+                    if (model.Routes.Count != 0)
                     {
-                        RouteVisible = true;
+                        routesVisible = true;
                     }
                     else
                     {
-                        RouteVisible = false;
+                        routesVisible = false;
                     }
-                    RaisePropertyChanged("RouteVisible");
+                    RaisePropertyChanged("RoutesVisible");
                 }
 
+                //Code to make sure that all time windows are correct and to change them if required
+                if (e.PropertyName.Equals("StartPosition_TimeFrom") || e.PropertyName.Equals("Positions"))
+                {
+                    if (model.StartPosition.TimeFrom > model.StartPosition.TimeTo)
+                    {
+                        model.StartPosition.TimeTo = model.StartPosition.TimeFrom;
+                    }
+                    foreach (Position position in model.Positions)
+                    {
+                        if(position.TimeFrom < model.StartPosition.TimeFrom)
+                        {
+                            position.TimeFrom = model.StartPosition.TimeFrom;
+                        }
+                    }
+                }
+                if (e.PropertyName.Equals("StartPosition_TimeTo") || e.PropertyName.Equals("Positions"))
+                {
+                    if (model.StartPosition.TimeTo < model.StartPosition.TimeFrom)
+                    {
+                        model.StartPosition.TimeFrom = model.StartPosition.TimeTo;
+                    }
+                    foreach (Position position in model.Positions)
+                    {
+                        if (position.TimeTo > model.StartPosition.TimeTo)
+                        {
+                            position.TimeTo = model.StartPosition.TimeTo;
+                        }
+                    }
+                }
                 if (e.PropertyName.Equals("Position_TimeFrom"))
                 {
                     foreach (Position position in model.Positions)
@@ -120,9 +166,9 @@ namespace LogisticsProgram
             RemovePositionCommand = new DelegateCommand<Position>((item) => {
                 model.Positions.Remove(item);
             });
-            GenerateRouteCommand = new DelegateCommand(() => {
+            GenerateRouteCommand = new DelegateCommand(async () => {
                 if(!String.IsNullOrEmpty(model.StartPosition.Address.AddressValue) && (model.Positions.Count > 0))
-                    model.GenerateRoute();
+                    await model.GenerateRoute();
             });
             AddressChosenCommand = new DelegateCommand<object[]>((objects =>
             {

@@ -36,6 +36,8 @@ namespace LogisticsProgram
             var col4 = 20;
             var col1 = workingWidth - col2 - col3 - col4;
 
+            if (col1 < 0) col1 = 0;
+
             gView.Columns[0].Width = col1;
             gView.Columns[1].Width = col2;
             gView.Columns[2].Width = col3;
@@ -52,6 +54,8 @@ namespace LogisticsProgram
             var col3 = 80;
             var col4 = 80;
             var col2 = workingWidth - col1 - col3 - col4;
+
+            if (col2 < 0) col2 = 0;
 
             gView.Columns[0].Width = col1;
             gView.Columns[1].Width = col2;

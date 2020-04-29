@@ -6,7 +6,7 @@
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:local="clr-namespace:LogisticsProgram"
         mc:Ignorable="d"
-        Title="Логистическая программа" Height="650" Width="1000"
+        Title="Логистическая программа" Height="780" Width="1200"
         x:Name="MainWindowName">
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
@@ -17,6 +17,7 @@
     <Window.DataContext>
         <local:MainViewModel/>
     </Window.DataContext>
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -28,6 +29,8 @@
         <Border Grid.Column="0" Grid.Row="0" BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Stretch" Margin="10,10,10,5">
             <Grid>
                 <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition/>
                     <RowDefinition/>
                     <RowDefinition/>
                     <RowDefinition/>
@@ -89,6 +92,19 @@
                 <Label Grid.Column="0" Grid.Row="1" Content="Стартовое время:"/>
                 <TextBox Grid.Column="1" Grid.Row="1" Name="StartTime">
                     <TextBox.Text>
+                        <Binding Path="StartPosition.TimeFrom" UpdateSourceTrigger="PropertyChanged">
+                            <Binding.ValidationRules>
+                                <ExceptionValidationRule/>
+                            </Binding.ValidationRules>
+                            <Binding.Converter>
+                                <local:LocalTimeToStringConverter/>
+                            </Binding.Converter>
+                        </Binding>
+                    </TextBox.Text>
+                </TextBox>
+                <Label Grid.Column="0" Grid.Row="2" Content="Конечное время:"/>
+                <TextBox Grid.Column="1" Grid.Row="2" Name="EndTime">
+                    <TextBox.Text>
                         <Binding Path="StartPosition.TimeTo" UpdateSourceTrigger="PropertyChanged">
                             <Binding.ValidationRules>
                                 <ExceptionValidationRule/>
@@ -99,10 +115,10 @@
                         </Binding>
                     </TextBox.Text>
                 </TextBox>
-                <Label Grid.Column="0" Grid.Row="2" Content="Задержка на точках (мин.):"/>
-                <TextBox Grid.Column="1" Grid.Row="2" Name="DelayTime">
+                <Label Grid.Column="0" Grid.Row="3" Content="Задержка на точках (мин.):"/>
+                <TextBox Grid.Column="1" Grid.Row="3" Name="DelayTime">
                     <TextBox.Text>
-                        <Binding Path="DelayPeriod">
+                        <Binding Path="DelayPeriod" UpdateSourceTrigger="PropertyChanged">
                             <Binding.ValidationRules>
                                 <ExceptionValidationRule/>
                             </Binding.ValidationRules>
@@ -112,8 +128,18 @@
                         </Binding>
                     </TextBox.Text>
                 </TextBox>
-                <Label Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="3" Content="Введите точки маршрута:"/>
-                <ListView Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="4" HorizontalAlignment="Stretch" BorderBrush="Transparent" x:Name="Positions" ItemsSource="{Binding Positions}" SizeChanged="Positions_OnSizeChanged" Height="200">
+                <Label Grid.Column="0" Grid.Row="4" Content="Количество машин:"/>
+                <TextBox Grid.Column="1" Grid.Row="4" Name="AmountOfVehicles">
+                    <TextBox.Text>
+                        <Binding Path="AmountOfVehicles" UpdateSourceTrigger="PropertyChanged">
+                            <Binding.ValidationRules>
+                                <ExceptionValidationRule/>
+                            </Binding.ValidationRules>
+                        </Binding>
+                    </TextBox.Text>
+                </TextBox>
+                <Label Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="5" Content="Введите точки маршрута:"/>
+                <ListView Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="6" HorizontalAlignment="Stretch" BorderBrush="Transparent" x:Name="Positions" ItemsSource="{Binding Positions}" SizeChanged="Positions_OnSizeChanged" Height="200">
                     <ListView.ItemContainerStyle>
                         <Style TargetType="ListViewItem">
                             <Setter Property="HorizontalContentAlignment" Value="Stretch" />
@@ -224,8 +250,8 @@
                         </GridView>
                     </ListView.View>
                 </ListView>
-                <Button Grid.Column="0" Grid.Row="5" Content="+" HorizontalAlignment="Left" Margin="7, 0, 0, 5" Width="18" Command="{Binding Path=AddPositionCommand}"/>
-                <Button Grid.Column="1" Grid.Row="5" Content="Сгенерировать маршрут" HorizontalAlignment="Right" Margin="0, 0, 7, 5" Padding="5, 0, 5, 0" Command="{Binding Path=GenerateRouteCommand}" Name="GenerateRouteButton">
+                <Button Grid.Column="0" Grid.Row="7" Content="+" HorizontalAlignment="Left" Margin="7, 0, 0, 5" Width="18" Command="{Binding Path=AddPositionCommand}"/>
+                <Button Grid.Column="1" Grid.Row="7" Content="Сгенерировать маршрут" HorizontalAlignment="Right" Margin="0, 0, 7, 5" Padding="5, 0, 5, 0" Command="{Binding Path=GenerateRouteCommand}" Name="GenerateRouteButton">
                     
                     <!--<Button.Style>
                         <Style TargetType="Button">
@@ -243,7 +269,7 @@
                 </Button>
             </Grid>
         </Border>
-        <Border Grid.Row="1" BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Stretch" Margin="10,5,10,10" Height="Auto" Visibility="{Binding RouteVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
+        <Border Grid.Row="1" BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Stretch" Margin="10,5,10,10" Height="Auto" Visibility="{Binding RoutesasdfVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition/>
@@ -253,7 +279,44 @@
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
                 <Label Grid.Column="0" Grid.Row="0" Content="Сгенерированный маршрут:"/>
-                <ListView  Grid.Column="0" Grid.Row="1" BorderBrush="Transparent" ItemsSource="{Binding Route.Positions}" Name="Route" SizeChanged="Route_OnSizeChanged" Height="200">
+                <ListView Grid.Column="0" Grid.Row="1" BorderBrush="Transparent" ItemsSource="{Binding Routes}" Name="Routes" Height="300">
+                    <ListView.ItemContainerStyle>
+                        <Style TargetType="ListViewItem">
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                        </Style>
+                    </ListView.ItemContainerStyle>
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel>
+                                <Label Content="{Binding VehicleId}" ContentStringFormat="{}Маршрут машины №{0}"/>
+                                <ListView ItemsSource="{Binding Positions}" SizeChanged="Route_OnSizeChanged">
+                                    <ListView.ItemContainerStyle>
+                                        <Style TargetType="ListViewItem">
+                                            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                        </Style>
+                                    </ListView.ItemContainerStyle>
+                                    <ListView.Resources>
+                                        <local:OrdinalConverter x:Key="OrdinalConverter" />
+                                    </ListView.Resources>
+                                    <ListView.View>
+                                        <GridView AllowsColumnReorder="False">
+                                            <GridView.ColumnHeaderContainerStyle>
+                                                <Style BasedOn="{StaticResource {x:Type GridViewColumnHeader}}" TargetType="{x:Type GridViewColumnHeader}">
+                                                    <Setter Property="IsHitTestVisible" Value="False"/>
+                                                </Style>
+                                            </GridView.ColumnHeaderContainerStyle>
+                                            <GridViewColumn Header="№" DisplayMemberBinding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListViewItem}}, Converter={StaticResource OrdinalConverter}}"/>
+                                            <GridViewColumn Header="Адрес" DisplayMemberBinding="{Binding Path=Address.StringAddressValue}"/>
+                                            <GridViewColumn Header="Прибытие от" DisplayMemberBinding="{Binding Path=TimeFrom, Converter={StaticResource LocalTimeToStringConverter}}"/>
+                                            <GridViewColumn Header="Прибытие до" DisplayMemberBinding="{Binding Path=TimeTo, Converter={StaticResource LocalTimeToStringConverter}}"/>
+                                        </GridView>
+                                    </ListView.View>
+                                </ListView>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+                <!--<ListView  Grid.Column="0" Grid.Row="1" BorderBrush="Transparent" ItemsSource="{Binding Route.Positions}" Name="Route" SizeChanged="Route_OnSizeChanged" Height="200">
                     <ListView.ItemContainerStyle>
                         <Style TargetType="ListViewItem">
                             <Setter Property="HorizontalContentAlignment" Value="Stretch" />
@@ -275,8 +338,9 @@
                             <GridViewColumn Header="Отгрузка до" DisplayMemberBinding="{Binding Path=TimeTo, Converter={StaticResource LocalTimeToStringConverter}}"/>
                         </GridView>
                     </ListView.View>
-                </ListView>
+                </ListView>-->
             </Grid>
         </Border>
     </Grid>
+    </ScrollViewer>
 </Window>
