@@ -109,6 +109,11 @@ namespace LogisticsProgram
                     RaisePropertyChanged("RoutesVisible");
                 }
 
+                if (e.PropertyName.Equals("StartPosition_Address"))
+                {
+                    
+                }
+
                 //Code to make sure that all time windows are correct and to change them if required
                 if (e.PropertyName.Equals("StartPosition_TimeFrom"))
                 {
@@ -138,7 +143,7 @@ namespace LogisticsProgram
                         }
                     }
                 }
-                if (e.PropertyName.Equals("Position_TimeFrom"))
+                if (e.PropertyName.Equals("Positions_TimeFrom"))
                 {
                     foreach (Position position in model.Positions)
                     {
@@ -148,7 +153,7 @@ namespace LogisticsProgram
                         }
                     }
                 }
-                if (e.PropertyName.Equals("Position_TimeTo"))
+                if (e.PropertyName.Equals("Positions_TimeTo"))
                 {
                     foreach (Position position in model.Positions)
                     {

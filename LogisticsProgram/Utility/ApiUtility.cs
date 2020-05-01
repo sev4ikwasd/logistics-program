@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -27,9 +28,29 @@ namespace LogisticsProgram
             return apiUtility ?? (apiUtility = new ApiUtility());
         }
 
-        public async Task<HttpResponseMessage> GetSearchedAddresses(String value)
+        public async Task<AsyncObservableCollection<Address.AddressVariant>> GetSearchedAddresses(String address)
         {
-            return await client.GetAsync($"{BASE_URL}search/2/search/{value}.json?typeahead=true&idxSet=PAD&countrySet=RU&key={APP_KEY}");
+            var encValue = WebUtility.UrlEncode(address);
+            HttpResponseMessage response = await client.GetAsync($"{BASE_URL}search/2/search/{encValue}.json?idxSet=PAD&countrySet=RU&key={APP_KEY}");
+            if (response.IsSuccessStatusCode)
+            {
+                AsyncObservableCollection<Address.AddressVariant> result = new AsyncObservableCollection<Address.AddressVariant>();
+                String strResponse = await response.Content.ReadAsStringAsync();
+                var N = JSON.Parse(strResponse);
+                for (int i = 0; i < N["results"].Count; i++)
+                {
+                    String freeFormAddress = N["results"][i]["address"]["freeformAddress"];
+                    String lat = N["results"][i]["position"]["lat"].Value;
+                    String lon = N["results"][i]["position"]["lon"].Value;
+                    var addr = $"{lat},{lon}";
+                    result.Add(new Address.AddressVariant(freeFormAddress, addr));
+                }
+                return result;
+            }
+            else
+            {
+                throw new Exception("Request wasn't successful");
+            }
         }
 
         public async Task<Period[,]> GetPeriodMatrix(List<Position> positions)
@@ -76,10 +97,5 @@ namespace LogisticsProgram
 
             return periodMatrix;
         }
-        /*
-        public async Task<HttpResponseMessage> GetRoute(String valueFrom, String valueTo)
-        {
-            return await client.GetAsync($"{BASE_URL}routing/1/calculateRoute/{valueFrom}:{valueTo}/json?maxAlternatives=1&key={APP_KEY}");
-        }*/
     }
 }

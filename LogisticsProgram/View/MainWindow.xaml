@@ -279,67 +279,44 @@
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
                 <Label Grid.Column="0" Grid.Row="0" Content="Сгенерированный маршрут:"/>
-                <ListView Grid.Column="0" Grid.Row="1" BorderBrush="Transparent" ItemsSource="{Binding Routes}" Name="Routes" Height="300">
-                    <ListView.ItemContainerStyle>
-                        <Style TargetType="ListViewItem">
-                            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                        </Style>
-                    </ListView.ItemContainerStyle>
-                    <ListView.ItemTemplate>
-                        <DataTemplate>
-                            <StackPanel>
-                                <Label Content="{Binding VehicleId}" ContentStringFormat="{}Маршрут машины №{0}"/>
-                                <ListView ItemsSource="{Binding Positions}" SizeChanged="Route_OnSizeChanged">
-                                    <ListView.ItemContainerStyle>
-                                        <Style TargetType="ListViewItem">
-                                            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                                        </Style>
-                                    </ListView.ItemContainerStyle>
-                                    <ListView.Resources>
-                                        <local:OrdinalConverter x:Key="OrdinalConverter" />
-                                    </ListView.Resources>
-                                    <ListView.View>
-                                        <GridView AllowsColumnReorder="False">
-                                            <GridView.ColumnHeaderContainerStyle>
-                                                <Style BasedOn="{StaticResource {x:Type GridViewColumnHeader}}" TargetType="{x:Type GridViewColumnHeader}">
-                                                    <Setter Property="IsHitTestVisible" Value="False"/>
-                                                </Style>
-                                            </GridView.ColumnHeaderContainerStyle>
-                                            <GridViewColumn Header="№" DisplayMemberBinding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListViewItem}}, Converter={StaticResource OrdinalConverter}}"/>
-                                            <GridViewColumn Header="Адрес" DisplayMemberBinding="{Binding Path=Address.StringAddressValue}"/>
-                                            <GridViewColumn Header="Прибытие от" DisplayMemberBinding="{Binding Path=TimeFrom, Converter={StaticResource LocalTimeToStringConverter}}"/>
-                                            <GridViewColumn Header="Прибытие до" DisplayMemberBinding="{Binding Path=TimeTo, Converter={StaticResource LocalTimeToStringConverter}}"/>
-                                        </GridView>
-                                    </ListView.View>
-                                </ListView>
-                            </StackPanel>
-                        </DataTemplate>
-                    </ListView.ItemTemplate>
-                </ListView>
-                <!--<ListView  Grid.Column="0" Grid.Row="1" BorderBrush="Transparent" ItemsSource="{Binding Route.Positions}" Name="Route" SizeChanged="Route_OnSizeChanged" Height="200">
-                    <ListView.ItemContainerStyle>
-                        <Style TargetType="ListViewItem">
-                            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                        </Style>
-                    </ListView.ItemContainerStyle>
-                    <ListView.Resources>
-                        <local:OrdinalConverter x:Key="OrdinalConverter" />
-                    </ListView.Resources>
-                    <ListView.View>
-                        <GridView AllowsColumnReorder="False">
-                            <GridView.ColumnHeaderContainerStyle>
-                                <Style BasedOn="{StaticResource {x:Type GridViewColumnHeader}}" TargetType="{x:Type GridViewColumnHeader}">
-                                    <Setter Property="IsHitTestVisible" Value="False"/>
-                                </Style>
-                            </GridView.ColumnHeaderContainerStyle>
-                            <GridViewColumn Header="№" DisplayMemberBinding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListViewItem}}, Converter={StaticResource OrdinalConverter}}"/>
-                            <GridViewColumn Header="Адрес" DisplayMemberBinding="{Binding Path=Address.StringAddressValue}"/>
-                            <GridViewColumn Header="Отгрузка от" DisplayMemberBinding="{Binding Path=TimeFrom, Converter={StaticResource LocalTimeToStringConverter}}"/>
-                            <GridViewColumn Header="Отгрузка до" DisplayMemberBinding="{Binding Path=TimeTo, Converter={StaticResource LocalTimeToStringConverter}}"/>
-                        </GridView>
-                    </ListView.View>
-                </ListView>-->
-            </Grid>
+                    <ListView Grid.Column="0" Grid.Row="1" BorderBrush="Transparent" ItemsSource="{Binding Routes}" Name="Routes" Height="300">
+                        <ListView.ItemContainerStyle>
+                            <Style TargetType="ListViewItem">
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                            </Style>
+                        </ListView.ItemContainerStyle>
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel>
+                                    <Label Content="{Binding VehicleId}" ContentStringFormat="{}Маршрут машины №{0}"/>
+                                    <ListView ItemsSource="{Binding Positions}" SizeChanged="Route_OnSizeChanged">
+                                        <ListView.ItemContainerStyle>
+                                            <Style TargetType="ListViewItem">
+                                                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                            </Style>
+                                        </ListView.ItemContainerStyle>
+                                        <ListView.Resources>
+                                            <local:OrdinalConverter x:Key="OrdinalConverter" />
+                                        </ListView.Resources>
+                                        <ListView.View>
+                                            <GridView AllowsColumnReorder="False">
+                                                <GridView.ColumnHeaderContainerStyle>
+                                                    <Style BasedOn="{StaticResource {x:Type GridViewColumnHeader}}" TargetType="{x:Type GridViewColumnHeader}">
+                                                        <Setter Property="IsHitTestVisible" Value="False"/>
+                                                    </Style>
+                                                </GridView.ColumnHeaderContainerStyle>
+                                                <GridViewColumn Header="№" DisplayMemberBinding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListViewItem}}, Converter={StaticResource OrdinalConverter}}"/>
+                                                <GridViewColumn Header="Адрес" DisplayMemberBinding="{Binding Path=Address.StringAddressValue}"/>
+                                                <GridViewColumn Header="Прибытие от" DisplayMemberBinding="{Binding Path=TimeFrom, Converter={StaticResource LocalTimeToStringConverter}}"/>
+                                                <GridViewColumn Header="Прибытие до" DisplayMemberBinding="{Binding Path=TimeTo, Converter={StaticResource LocalTimeToStringConverter}}"/>
+                                            </GridView>
+                                        </ListView.View>
+                                    </ListView>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                </Grid>
         </Border>
     </Grid>
     </ScrollViewer>

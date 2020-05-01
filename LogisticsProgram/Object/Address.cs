@@ -57,9 +57,9 @@ namespace LogisticsProgram
             }
         }
 
-        private AsyncObservableCollection<AddressVariant> addressVariants = new AsyncObservableCollection<AddressVariant>();
+        private ObservableCollection<AddressVariant> addressVariants = new /*Async*/ObservableCollection<AddressVariant>();
 
-        public AsyncObservableCollection<AddressVariant> AddressVariants
+        public ObservableCollection<AddressVariant> AddressVariants
         {
             get
             {
@@ -69,32 +69,43 @@ namespace LogisticsProgram
 
         private async Task GetAddressFromApi(String value)
         {
-            var encValue = WebUtility.UrlEncode(value);
-            HttpResponseMessage response = await ApiUtility.GetInstance().GetSearchedAddresses(encValue);
-            if (response.IsSuccessStatusCode)
+            //Really bad hack
+            await App.Current.Dispatcher.BeginInvoke((Action)delegate ()
             {
-                String strResponse = await response.Content.ReadAsStringAsync();
-                var N = JSON.Parse(strResponse);
-                if (N["results"].Count > 0)
+                addressVariants.Clear();
+            });
+            try
+            {
+                AsyncObservableCollection<AddressVariant> addresses = await ApiUtility.GetInstance().GetSearchedAddresses(value);
+                if (addresses.Count == 0)
                 {
-                    addressVariants.Clear();
-                    for (int i = 0; i < N["results"].Count; i++)
-                    {
-                        String freeFormAddress = N["results"][i]["address"]["freeformAddress"];
-                        String lat = N["results"][i]["position"]["lat"].Value;
-                        String lon = N["results"][i]["position"]["lon"].Value;
-                        var address = $"{lat},{lon}";
-                        addressVariants.Add(new AddressVariant(freeFormAddress, address));
-                    }
+                    
+                    //addressVariants.Clear();
+                    isAddressValid = false;
                 }
                 else
                 {
-                    addressVariants.Clear();
-                    isAddressValid = false;
+                    await App.Current.Dispatcher.BeginInvoke((Action)delegate ()
+                    {
+                        foreach (AddressVariant address in addresses)
+                        {
+                            addressVariants.Add(address);
+                        }
+                    });
+                    /*addressVariants.Clear();
+                    foreach (AddressVariant address in addresses)
+                    {
+                        addressVariants.Add(address);
+                    }*/
                 }
-                RaisePropertyChanged("StringAddressValue");
-                RaisePropertyChanged("AddressVariants");
             }
+            catch (Exception)
+            {
+                //addressVariants.Clear();
+                isAddressValid = false;
+            }
+            RaisePropertyChanged("StringAddressValue");
+            RaisePropertyChanged("AddressVariants");
         }
 
         public void SetAddressVariant(AddressVariant addressVariant)

@@ -21,6 +21,7 @@ namespace LogisticsProgram
             set
             {
                 address = value;
+                RaisePropertyChanged("Address");
             }
         }
 
