@@ -110,7 +110,7 @@ namespace LogisticsProgram
                 }
 
                 //Code to make sure that all time windows are correct and to change them if required
-                if (e.PropertyName.Equals("StartPosition_TimeFrom") || e.PropertyName.Equals("Positions"))
+                if (e.PropertyName.Equals("StartPosition_TimeFrom"))
                 {
                     if (model.StartPosition.TimeFrom > model.StartPosition.TimeTo)
                     {
@@ -124,7 +124,7 @@ namespace LogisticsProgram
                         }
                     }
                 }
-                if (e.PropertyName.Equals("StartPosition_TimeTo") || e.PropertyName.Equals("Positions"))
+                if (e.PropertyName.Equals("StartPosition_TimeTo"))
                 {
                     if (model.StartPosition.TimeTo < model.StartPosition.TimeFrom)
                     {
@@ -161,7 +161,7 @@ namespace LogisticsProgram
             };
 
             AddPositionCommand = new DelegateCommand(() => {
-                model.Positions.Add(new Position());
+                model.Positions.Add(new Position(new Address(), model.StartPosition.TimeFrom, model.StartPosition.TimeTo));
             });
             RemovePositionCommand = new DelegateCommand<Position>((item) => {
                 model.Positions.Remove(item);
