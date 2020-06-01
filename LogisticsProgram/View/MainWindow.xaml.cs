@@ -1,22 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace LogisticsProgram
 {
     /// <summary>
-    /// Логика взаимодействия для MainWindow.xaml
+    ///     Логика взаимодействия для MainWindow.xaml
     /// </summary>
     public partial class MainWindow : Window
     {
@@ -27,8 +15,8 @@ namespace LogisticsProgram
 
         private void Positions_OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            ListView listView = sender as ListView;
-            GridView gView = listView.View as GridView;
+            var listView = sender as ListView;
+            var gView = listView.View as GridView;
 
             var workingWidth = listView.ActualWidth - 2 * SystemParameters.VerticalScrollBarWidth;
             var col2 = 80;
@@ -46,8 +34,8 @@ namespace LogisticsProgram
 
         private void Route_OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            ListView listView = sender as ListView;
-            GridView gView = listView.View as GridView;
+            var listView = sender as ListView;
+            var gView = listView.View as GridView;
 
             var workingWidth = listView.ActualWidth - 2 * SystemParameters.VerticalScrollBarWidth;
             var col1 = 20;

@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
 using NodaTime;
@@ -30,7 +26,7 @@ namespace LogisticsProgram
         {
             try
             {
-                var speriod = (String) value;
+                var speriod = (string) value;
                 var intperiod = int.Parse(speriod);
                 return Period.FromMinutes(intperiod);
             }

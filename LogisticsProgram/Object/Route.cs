@@ -1,56 +1,36 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LogisticsProgram
 {
     public class Route
     {
-        private int vehicleId;
-
-        public int VehicleId
-        {
-            get
-            {
-                return vehicleId;
-            }
-            set
-            {
-                vehicleId = value;
-            }
-        }
-
-        private readonly ObservableCollection<Position> positions = new ObservableCollection<Position>();
-        public ObservableCollection<Position> Positions => positions;
-
         public Route(int vehicleId)
         {
-            this.vehicleId = vehicleId;
+            VehicleId = vehicleId;
         }
+
+        public int VehicleId { get; set; }
+
+        public ObservableCollection<Position> Positions { get; } = new ObservableCollection<Position>();
 
         public override bool Equals(object obj)
         {
-            if (obj is Route route && (route.positions.Count == positions.Count))
+            if (obj is Route route && route.Positions.Count == Positions.Count)
             {
-                bool equals = true;
-                for(int i = 0; i < positions.Count; i++)
-                {
-                    if (!positions[i].Equals(route.positions[i]))
-                    {
+                var equals = true;
+                for (var i = 0; i < Positions.Count; i++)
+                    if (!Positions[i].Equals(route.Positions[i]))
                         equals = false;
-                    }
-                }
                 return equals;
             }
+
             return false;
         }
 
         public override int GetHashCode()
         {
-            return -1378504013 + EqualityComparer<ObservableCollection<Position>>.Default.GetHashCode(positions);
+            return -1378504013 + EqualityComparer<ObservableCollection<Position>>.Default.GetHashCode(Positions);
         }
     }
 }

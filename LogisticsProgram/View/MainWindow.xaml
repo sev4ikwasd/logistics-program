@@ -6,318 +6,367 @@
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:local="clr-namespace:LogisticsProgram"
         mc:Ignorable="d"
-        Title="Логистическая программа" Height="780" Width="1200"
-        x:Name="MainWindowName">
+        Title="Логистическая программа" Height="810" Width="1200">
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
-        <local:LocalTimeToStringConverter x:Key="LocalTimeToStringConverter"/>
-        <local:PeriodToStringConverter x:Key="PeriodToStringConverter"/>
-        <local:BasicMultiBindingConverter x:Key="BasicMultiBindingConverter"/>
-    </Window.Resources>
-    <Window.DataContext>
-        <local:MainViewModel/>
-    </Window.DataContext>
-    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition/>
-        </Grid.ColumnDefinitions>
-        <Border Grid.Column="0" Grid.Row="0" BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Stretch" Margin="10,10,10,5">
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition/>
-                    <RowDefinition/>
-                    <RowDefinition/>
-                    <RowDefinition/>
-                    <RowDefinition/>
-                    <RowDefinition/>
-                    <RowDefinition/>
-                    <RowDefinition/>
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition/>
-                </Grid.ColumnDefinitions>
-                <Label Grid.Column="0" Grid.Row="0" Content="Стартовая позиция:"/>
-                <DockPanel Grid.Column="1" Grid.Row="0">
-                    <TextBox x:Name="StartAddressTextBox" HorizontalAlignment="Stretch" Width="{Binding ActualWidth, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DockPanel}}}">
-                        <TextBox.Text>
-                            <Binding Path="StartPosition.Address.StringAddressValue" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
-                                <Binding.ValidationRules>
-                                    <DataErrorValidationRule/>
-                                </Binding.ValidationRules>
-                            </Binding>
-                        </TextBox.Text>
-                    </TextBox>
-                    <Popup Width="{Binding RelativeSource={RelativeSource Self}, Path=PlacementTarget.ActualWidth}" Placement="Bottom" PlacementTarget="{Binding ElementName=StartAddressTextBox}">
-                        <Popup.Style>
-                            <Style TargetType="{x:Type Popup}">
-                                <Setter Property="IsOpen" Value="False" />
-                                <Style.Triggers>
-                                    <MultiDataTrigger>
-                                        <MultiDataTrigger.Conditions>
-                                            <Condition Binding="{Binding ElementName=listBox, Path=HasItems}" Value="True"/>
-                                            <Condition Binding="{Binding ElementName=StartAddressTextBox, Path=IsFocused}" Value="True"/>
-                                        </MultiDataTrigger.Conditions>
-                                        <Setter Property="IsOpen" Value="True"/>
-                                    </MultiDataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </Popup.Style>
-                        <ListBox ItemsSource="{Binding StartPosition.Address.AddressVariants, UpdateSourceTrigger=PropertyChanged}" Name="listBox" Height="65">
-                            <ListBox.ItemTemplate>
-                                <DataTemplate>
-                                    <TextBlock Text="{Binding Path=StringAddressValue}"/>
-                                </DataTemplate>
-                            </ListBox.ItemTemplate>
-                            <i:Interaction.Triggers>
-                                <i:EventTrigger EventName="SelectionChanged">
-                                    <i:InvokeCommandAction Command="{Binding AddressChosenCommand}">
-                                        <i:InvokeCommandAction.CommandParameter>
-                                            <MultiBinding Converter="{StaticResource BasicMultiBindingConverter}">
-                                                <Binding Path="StartPosition"/>
-                                                <Binding Path="SelectedItem" ElementName="listBox"/>
-                                            </MultiBinding>
-                                        </i:InvokeCommandAction.CommandParameter>
-                                    </i:InvokeCommandAction>
-                                </i:EventTrigger>
-                            </i:Interaction.Triggers>
-                        </ListBox>
-                    </Popup>
-                </DockPanel>
-                <Label Grid.Column="0" Grid.Row="1" Content="Стартовое время:"/>
-                <TextBox Grid.Column="1" Grid.Row="1" Name="StartTime">
+        <local:LocalTimeToStringConverter x:Key="LocalTimeToStringConverter" />
+        <!--<local:PeriodToStringConverter x:Key="PeriodToStringConverter"/>-->
+        <local:BasicMultiBindingConverter x:Key="BasicMultiBindingConverter" />
+        <local:AddressToAddressViewModelConverter x:Key="AddressToAddressViewModelConverter" />
+        <DataTemplate x:Key="StringWithSearchTemplate">
+            <DockPanel>
+                <TextBox x:Name="StartAddressTextBox" HorizontalAlignment="Stretch"
+                         Width="{Binding ActualWidth, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DockPanel}}}">
                     <TextBox.Text>
-                        <Binding Path="StartPosition.TimeFrom" UpdateSourceTrigger="PropertyChanged">
-                            <Binding.ValidationRules>
-                                <ExceptionValidationRule/>
-                            </Binding.ValidationRules>
-                            <Binding.Converter>
-                                <local:LocalTimeToStringConverter/>
-                            </Binding.Converter>
-                        </Binding>
+                        <Binding Path="StringAddressValue" Mode="TwoWay"
+                                 UpdateSourceTrigger="PropertyChanged" ValidatesOnExceptions="True" />
                     </TextBox.Text>
                 </TextBox>
-                <Label Grid.Column="0" Grid.Row="2" Content="Конечное время:"/>
-                <TextBox Grid.Column="1" Grid.Row="2" Name="EndTime">
-                    <TextBox.Text>
-                        <Binding Path="StartPosition.TimeTo" UpdateSourceTrigger="PropertyChanged">
-                            <Binding.ValidationRules>
-                                <ExceptionValidationRule/>
-                            </Binding.ValidationRules>
-                            <Binding.Converter>
-                                <local:LocalTimeToStringConverter/>
-                            </Binding.Converter>
-                        </Binding>
-                    </TextBox.Text>
-                </TextBox>
-                <Label Grid.Column="0" Grid.Row="3" Content="Задержка на точках (мин.):"/>
-                <TextBox Grid.Column="1" Grid.Row="3" Name="DelayTime">
-                    <TextBox.Text>
-                        <Binding Path="DelayPeriod" UpdateSourceTrigger="PropertyChanged">
-                            <Binding.ValidationRules>
-                                <ExceptionValidationRule/>
-                            </Binding.ValidationRules>
-                            <Binding.Converter>
-                                <local:PeriodToStringConverter/>
-                            </Binding.Converter>
-                        </Binding>
-                    </TextBox.Text>
-                </TextBox>
-                <Label Grid.Column="0" Grid.Row="4" Content="Количество машин:"/>
-                <TextBox Grid.Column="1" Grid.Row="4" Name="AmountOfVehicles">
-                    <TextBox.Text>
-                        <Binding Path="AmountOfVehicles" UpdateSourceTrigger="PropertyChanged">
-                            <Binding.ValidationRules>
-                                <ExceptionValidationRule/>
-                            </Binding.ValidationRules>
-                        </Binding>
-                    </TextBox.Text>
-                </TextBox>
-                <Label Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="5" Content="Введите точки маршрута:"/>
-                <ListView Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="6" HorizontalAlignment="Stretch" BorderBrush="Transparent" x:Name="Positions" ItemsSource="{Binding Positions}" SizeChanged="Positions_OnSizeChanged" Height="200">
-                    <ListView.ItemContainerStyle>
-                        <Style TargetType="ListViewItem">
-                            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                        </Style>
-                    </ListView.ItemContainerStyle>
-                    <ListView.View>
-                        <GridView AllowsColumnReorder="False">
-                            <GridView.ColumnHeaderContainerStyle>
-                                <Style BasedOn="{StaticResource {x:Type GridViewColumnHeader}}" TargetType="{x:Type GridViewColumnHeader}">
-                                    <Setter Property="IsHitTestVisible" Value="False"/>
-                                </Style>
-                            </GridView.ColumnHeaderContainerStyle>
-                            <GridViewColumn Header="Адрес">
-                                <GridViewColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <DockPanel Margin="-5, 0, -5, 0">
-                                            <TextBox x:Name="tb" HorizontalAlignment="Stretch" Width="{Binding ActualWidth, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DockPanel}}}">
-                                                <TextBox.Text>
-                                                    <Binding Path="Address.StringAddressValue" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
-                                                        <Binding.ValidationRules>
-                                                            <DataErrorValidationRule/>
-                                                        </Binding.ValidationRules>
-                                                    </Binding>
-                                                </TextBox.Text>
-                                            </TextBox>
-                                            <Popup Width="{Binding RelativeSource={RelativeSource Self}, Path=PlacementTarget.ActualWidth}" Placement="Bottom" PlacementTarget="{Binding ElementName=tb}">
-                                                <Popup.Style>
-                                                    <Style TargetType="{x:Type Popup}">
-                                                        <Setter Property="IsOpen" Value="False" />
-                                                        <Style.Triggers>
-                                                            <MultiDataTrigger>
-                                                                <MultiDataTrigger.Conditions>
-                                                                    <Condition Binding="{Binding ElementName=listBox, Path=HasItems}" Value="True"/>
-                                                                    <Condition Binding="{Binding ElementName=tb, Path=IsFocused}" Value="True"/>
-                                                                </MultiDataTrigger.Conditions>
-                                                                <Setter Property="IsOpen" Value="True"/>
-                                                            </MultiDataTrigger>
-                                                        </Style.Triggers>
-                                                    </Style>
-                                                </Popup.Style>
-                                                <ListBox ItemsSource="{Binding Address.AddressVariants, UpdateSourceTrigger=PropertyChanged}" Name="listBox" Height="65">
-                                                    <ListBox.ItemTemplate>
-                                                        <DataTemplate>
-                                                            <TextBlock Text="{Binding Path=StringAddressValue}"/>
-                                                        </DataTemplate>
-                                                    </ListBox.ItemTemplate>
-                                                    <i:Interaction.Triggers>
-                                                        <i:EventTrigger EventName="SelectionChanged">
-                                                            <i:InvokeCommandAction Command="{Binding DataContext.AddressChosenCommand, ElementName=MainWindowName}">
-                                                                <i:InvokeCommandAction.CommandParameter>
-                                                                    <MultiBinding Converter="{StaticResource BasicMultiBindingConverter}">
-                                                                        <Binding Path="."/>
-                                                                        <Binding Path="SelectedItem" ElementName="listBox"/>
-                                                                    </MultiBinding>
-                                                                </i:InvokeCommandAction.CommandParameter>
-                                                            </i:InvokeCommandAction>
-                                                        </i:EventTrigger>
-                                                    </i:Interaction.Triggers>
-                                                </ListBox>
-                                            </Popup>
-                                        </DockPanel>
-                                    </DataTemplate>
-                                </GridViewColumn.CellTemplate>
-                            </GridViewColumn>
-                            <GridViewColumn Header="Отгрузка от">
-                                <GridViewColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <TextBox Margin="-5, 0, -5, 0" TextAlignment="Right">
-                                            <TextBox.Text>
-                                                <Binding Path="TimeFrom" UpdateSourceTrigger="PropertyChanged">
-                                                    <Binding.ValidationRules>
-                                                        <ExceptionValidationRule/>
-                                                    </Binding.ValidationRules>
-                                                    <Binding.Converter>
-                                                        <local:LocalTimeToStringConverter/>
-                                                    </Binding.Converter>
-                                                </Binding>
-                                            </TextBox.Text>
-                                        </TextBox>
-                                    </DataTemplate>
-                                </GridViewColumn.CellTemplate>
-                            </GridViewColumn>
-                            <GridViewColumn Header="Отгрузка до">
-                                <GridViewColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <TextBox Margin="-5, 0, -5, 0" TextAlignment="Right">
-                                            <TextBox.Text>
-                                                <Binding Path="TimeTo" UpdateSourceTrigger="PropertyChanged">
-                                                    <Binding.ValidationRules>
-                                                        <ExceptionValidationRule/>
-                                                    </Binding.ValidationRules>
-                                                    <Binding.Converter>
-                                                        <local:LocalTimeToStringConverter/>
-                                                    </Binding.Converter>
-                                                </Binding>
-                                            </TextBox.Text>
-                                        </TextBox>
-                                    </DataTemplate>
-                                </GridViewColumn.CellTemplate>
-                            </GridViewColumn>
-                            <GridViewColumn>
-                                <GridViewColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <Button Content="-" Width="Auto" Margin="-5, 0, -5, 0" Command="{Binding DataContext.RemovePositionCommand, ElementName=MainWindowName}" CommandParameter="{Binding Path=.}"/>
-                                    </DataTemplate>
-                                </GridViewColumn.CellTemplate>
-                            </GridViewColumn>
-                        </GridView>
-                    </ListView.View>
-                </ListView>
-                <Button Grid.Column="0" Grid.Row="7" Content="+" HorizontalAlignment="Left" Margin="7, 0, 0, 5" Width="18" Command="{Binding Path=AddPositionCommand}"/>
-                <Button Grid.Column="1" Grid.Row="7" Content="Сгенерировать маршрут" HorizontalAlignment="Right" Margin="0, 0, 7, 5" Padding="5, 0, 5, 0" Command="{Binding Path=GenerateRouteCommand}" Name="GenerateRouteButton">
-                    
-                    <!--<Button.Style>
-                        <Style TargetType="Button">
-                            <Setter Property="IsEnabled" Value="False"/>
+                <Popup
+                    Width="{Binding RelativeSource={RelativeSource Self}, Path=PlacementTarget.ActualWidth}"
+                    Placement="Bottom" PlacementTarget="{Binding ElementName=StartAddressTextBox}">
+                    <Popup.Style>
+                        <Style TargetType="{x:Type Popup}">
+                            <Setter Property="IsOpen" Value="False" />
                             <Style.Triggers>
                                 <MultiDataTrigger>
                                     <MultiDataTrigger.Conditions>
-                                        <Condition Binding="{Binding Path=(Validation.HasError), ElementName=StartTime}" Value="False"/>
+                                        <Condition
+                                            Binding="{Binding ElementName=ListBox, Path=HasItems}"
+                                            Value="True" />
+                                        <Condition
+                                            Binding="{Binding ElementName=StartAddressTextBox, Path=IsFocused}"
+                                            Value="True" />
                                     </MultiDataTrigger.Conditions>
-                                <Setter Property="IsEnabled" Value="True"/>
+                                    <Setter Property="IsOpen" Value="True" />
                                 </MultiDataTrigger>
                             </Style.Triggers>
                         </Style>
-                    </Button.Style>-->
-                </Button>
-            </Grid>
-        </Border>
-        <Border Grid.Row="1" BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Stretch" Margin="10,5,10,10" Height="Auto" Visibility="{Binding RoutesasdfVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
-            <Grid>
+                    </Popup.Style>
+                    <ListBox
+                        ItemsSource="{Binding AddressVariants, UpdateSourceTrigger=PropertyChanged}"
+                        Name="ListBox" Height="65">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Path=StringAddressValue}" />
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="SelectionChanged">
+                                <i:InvokeCommandAction Command="{Binding AddressChosenCommand}"
+                                                       CommandParameter="{Binding Path=SelectedItem, ElementName=ListBox}" />
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </ListBox>
+                </Popup>
+            </DockPanel>
+        </DataTemplate>
+    </Window.Resources>
+    <Window.DataContext>
+        <local:MainViewModel />
+    </Window.DataContext>
+    <TabControl>
+        <TabItem Header="Маршруты">
+            <TabItem.DataContext>
+                <local:RoutesViewModel />
+            </TabItem.DataContext>
+            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <Border Grid.Column="0" Grid.Row="0" BorderBrush="Black" BorderThickness="1"
+                            HorizontalAlignment="Stretch" Margin="10,10,10,5">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+                            <DockPanel Grid.Row="0">
+                                <Label DockPanel.Dock="Left" Content="Стартовая позиция:" />
+                                <ContentPresenter ContentTemplate="{StaticResource StringWithSearchTemplate}"
+                                                  Content="{Binding StartPosition.Address, Converter={StaticResource AddressToAddressViewModelConverter}}" />
+                            </DockPanel>
+                            <DockPanel Grid.Row="1">
+                                <Label DockPanel.Dock="Left" Content="Стартовое время:" />
+                                <TextBox DockPanel.Dock="Right" Name="StartTime">
+                                    <TextBox.Text>
+                                        <Binding Path="StartPosition.TimeFrom" UpdateSourceTrigger="PropertyChanged">
+                                            <Binding.ValidationRules>
+                                                <ExceptionValidationRule />
+                                            </Binding.ValidationRules>
+                                            <Binding.Converter>
+                                                <local:LocalTimeToStringConverter />
+                                            </Binding.Converter>
+                                        </Binding>
+                                    </TextBox.Text>
+                                </TextBox>
+                            </DockPanel>
+                            <DockPanel Grid.Row="2">
+                                <Label DockPanel.Dock="Left" Content="Конечное время:" />
+                                <TextBox DockPanel.Dock="Right" Name="EndTime">
+                                    <TextBox.Text>
+                                        <Binding Path="StartPosition.TimeTo" UpdateSourceTrigger="PropertyChanged">
+                                            <Binding.ValidationRules>
+                                                <ExceptionValidationRule />
+                                            </Binding.ValidationRules>
+                                            <Binding.Converter>
+                                                <local:LocalTimeToStringConverter />
+                                            </Binding.Converter>
+                                        </Binding>
+                                    </TextBox.Text>
+                                </TextBox>
+                            </DockPanel>
+                            <DockPanel Grid.Row="3">
+                                <Label DockPanel.Dock="Left" Content="Задержка на точках (мин.):" />
+                                <TextBox DockPanel.Dock="Right" Name="DelayTime">
+                                    <TextBox.Text>
+                                        <Binding Path="DelayPeriod" UpdateSourceTrigger="PropertyChanged">
+                                            <Binding.ValidationRules>
+                                                <ExceptionValidationRule />
+                                            </Binding.ValidationRules>
+                                            <Binding.Converter>
+                                                <local:PeriodToStringConverter />
+                                            </Binding.Converter>
+                                        </Binding>
+                                    </TextBox.Text>
+                                </TextBox>
+                            </DockPanel>
+                            <DockPanel Grid.Row="4">
+                                <Label DockPanel.Dock="Left" Content="Количество машин:" />
+                                <TextBox DockPanel.Dock="Right" Name="AmountOfVehicles">
+                                    <TextBox.Text>
+                                        <Binding Path="AmountOfVehicles" UpdateSourceTrigger="PropertyChanged">
+                                            <Binding.ValidationRules>
+                                                <ExceptionValidationRule />
+                                            </Binding.ValidationRules>
+                                        </Binding>
+                                    </TextBox.Text>
+                                </TextBox>
+                            </DockPanel>
+                            <Label Grid.Row="5" Content="Введите точки маршрута:" />
+                            <ListView Grid.Row="6" HorizontalAlignment="Stretch" BorderBrush="Transparent"
+                                      x:Name="Positions" ItemsSource="{Binding Positions}"
+                                      SizeChanged="Positions_OnSizeChanged" Height="200">
+                                <ListView.ItemContainerStyle>
+                                    <Style TargetType="ListViewItem">
+                                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                    </Style>
+                                </ListView.ItemContainerStyle>
+                                <ListView.View>
+                                    <GridView AllowsColumnReorder="False">
+                                        <GridView.ColumnHeaderContainerStyle>
+                                            <Style BasedOn="{StaticResource {x:Type GridViewColumnHeader}}"
+                                                   TargetType="{x:Type GridViewColumnHeader}">
+                                                <Setter Property="IsHitTestVisible" Value="False" />
+                                            </Style>
+                                        </GridView.ColumnHeaderContainerStyle>
+                                        <GridViewColumn Header="Адрес">
+                                            <GridViewColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <ContentPresenter Margin="-5, 0, -5, 0"
+                                                                      ContentTemplate="{StaticResource StringWithSearchTemplate}"
+                                                                      Content="{Binding Address, Converter={StaticResource AddressToAddressViewModelConverter}}" />
+                                                </DataTemplate>
+                                            </GridViewColumn.CellTemplate>
+                                        </GridViewColumn>
+                                        <GridViewColumn Header="Отгрузка от">
+                                            <GridViewColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <TextBox Margin="-5, 0, -5, 0" TextAlignment="Right">
+                                                        <TextBox.Text>
+                                                            <Binding Path="TimeFrom"
+                                                                     UpdateSourceTrigger="PropertyChanged">
+                                                                <Binding.ValidationRules>
+                                                                    <ExceptionValidationRule />
+                                                                </Binding.ValidationRules>
+                                                                <Binding.Converter>
+                                                                    <local:LocalTimeToStringConverter />
+                                                                </Binding.Converter>
+                                                            </Binding>
+                                                        </TextBox.Text>
+                                                    </TextBox>
+                                                </DataTemplate>
+                                            </GridViewColumn.CellTemplate>
+                                        </GridViewColumn>
+                                        <GridViewColumn Header="Отгрузка до">
+                                            <GridViewColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <TextBox Margin="-5, 0, -5, 0" TextAlignment="Right">
+                                                        <TextBox.Text>
+                                                            <Binding Path="TimeTo"
+                                                                     UpdateSourceTrigger="PropertyChanged">
+                                                                <Binding.ValidationRules>
+                                                                    <ExceptionValidationRule />
+                                                                </Binding.ValidationRules>
+                                                                <Binding.Converter>
+                                                                    <local:LocalTimeToStringConverter />
+                                                                </Binding.Converter>
+                                                            </Binding>
+                                                        </TextBox.Text>
+                                                    </TextBox>
+                                                </DataTemplate>
+                                            </GridViewColumn.CellTemplate>
+                                        </GridViewColumn>
+                                        <GridViewColumn>
+                                            <GridViewColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <Button Content="-" Width="Auto" Margin="-5, 0, -5, 0"
+                                                            Command="{Binding DataContext.RemovePositionCommand, RelativeSource={RelativeSource AncestorType=ListView}}"
+                                                            CommandParameter="{Binding Path=.}" />
+                                                </DataTemplate>
+                                            </GridViewColumn.CellTemplate>
+                                        </GridViewColumn>
+                                    </GridView>
+                                </ListView.View>
+                            </ListView>
+                            <DockPanel Grid.Row="7">
+                                <Button DockPanel.Dock="Left" Content="+" HorizontalAlignment="Left"
+                                        Margin="7, 0, 0, 5" Width="18" Command="{Binding Path=AddPositionCommand}" />
+                                <Button DockPanel.Dock="Right" Content="Сгенерировать маршрут"
+                                        HorizontalAlignment="Right" Margin="0, 0, 7, 5" Padding="5, 0, 5, 0"
+                                        Command="{Binding Path=GenerateRouteCommand}" Name="GenerateRouteButton" />
+                                <!--<Button.Style>
+                                        <Style TargetType="Button">
+                                            <Setter Property="IsEnabled" Value="False"/>
+                                            <Style.Triggers>
+                                                <MultiDataTrigger>
+                                                    <MultiDataTrigger.Conditions>
+                                                        <Condition Binding="{Binding Path=(Validation.HasError), ElementName=StartTime}" Value="False"/>
+                                                    </MultiDataTrigger.Conditions>
+                                                <Setter Property="IsEnabled" Value="True"/>
+                                                </MultiDataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Button.Style>
+                                </Button>-->
+                            </DockPanel>
+                        </Grid>
+                    </Border>
+                    <Border Grid.Row="1" BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Stretch"
+                            Margin="10,5,10,10" Height="Auto"
+                            Visibility="{Binding RoutesVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+                            <Label Grid.Column="0" Grid.Row="0" Content="Сгенерированный маршрут:" />
+                            <ListView Grid.Column="0" Grid.Row="1" BorderBrush="Transparent"
+                                      ItemsSource="{Binding Routes}" Name="Routes" Height="300">
+                                <ListView.ItemContainerStyle>
+                                    <Style TargetType="ListViewItem">
+                                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                    </Style>
+                                </ListView.ItemContainerStyle>
+                                <ListView.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel>
+                                            <Label Content="{Binding VehicleId}"
+                                                   ContentStringFormat="{}Маршрут машины №{0}" />
+                                            <ListView ItemsSource="{Binding Positions}"
+                                                      SizeChanged="Route_OnSizeChanged">
+                                                <ListView.ItemContainerStyle>
+                                                    <Style TargetType="ListViewItem">
+                                                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                                    </Style>
+                                                </ListView.ItemContainerStyle>
+                                                <ListView.Resources>
+                                                    <local:OrdinalConverter x:Key="OrdinalConverter" />
+                                                </ListView.Resources>
+                                                <ListView.View>
+                                                    <GridView AllowsColumnReorder="False">
+                                                        <GridView.ColumnHeaderContainerStyle>
+                                                            <Style
+                                                                BasedOn="{StaticResource {x:Type GridViewColumnHeader}}"
+                                                                TargetType="{x:Type GridViewColumnHeader}">
+                                                                <Setter Property="IsHitTestVisible" Value="False" />
+                                                            </Style>
+                                                        </GridView.ColumnHeaderContainerStyle>
+                                                        <GridViewColumn Header="№"
+                                                                        DisplayMemberBinding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListViewItem}}, Converter={StaticResource OrdinalConverter}}" />
+                                                        <GridViewColumn Header="Адрес"
+                                                                        DisplayMemberBinding="{Binding Path=Address.StringAddressValue}" />
+                                                        <GridViewColumn Header="Прибытие от"
+                                                                        DisplayMemberBinding="{Binding Path=TimeFrom, Converter={StaticResource LocalTimeToStringConverter}}" />
+                                                        <GridViewColumn Header="Прибытие до"
+                                                                        DisplayMemberBinding="{Binding Path=TimeTo, Converter={StaticResource LocalTimeToStringConverter}}" />
+                                                    </GridView>
+                                                </ListView.View>
+                                            </ListView>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
+                            </ListView>
+                        </Grid>
+                    </Border>
+                </Grid>
+            </ScrollViewer>
+        </TabItem>
+        <TabItem Header="Пункты назначения">
+            <TabItem.DataContext>
+                <local:PlacesViewModel />
+            </TabItem.DataContext>
+            <Grid Margin="6">
                 <Grid.RowDefinitions>
-                    <RowDefinition/>
-                    <RowDefinition/>
+                    <RowDefinition />
+                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition/>
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="6" />
+                    <ColumnDefinition Width="2*" />
                 </Grid.ColumnDefinitions>
-                <Label Grid.Column="0" Grid.Row="0" Content="Сгенерированный маршрут:"/>
-                    <ListView Grid.Column="0" Grid.Row="1" BorderBrush="Transparent" ItemsSource="{Binding Routes}" Name="Routes" Height="300">
-                        <ListView.ItemContainerStyle>
-                            <Style TargetType="ListViewItem">
-                                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                            </Style>
-                        </ListView.ItemContainerStyle>
-                        <ListView.ItemTemplate>
-                            <DataTemplate>
-                                <StackPanel>
-                                    <Label Content="{Binding VehicleId}" ContentStringFormat="{}Маршрут машины №{0}"/>
-                                    <ListView ItemsSource="{Binding Positions}" SizeChanged="Route_OnSizeChanged">
-                                        <ListView.ItemContainerStyle>
-                                            <Style TargetType="ListViewItem">
-                                                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                                            </Style>
-                                        </ListView.ItemContainerStyle>
-                                        <ListView.Resources>
-                                            <local:OrdinalConverter x:Key="OrdinalConverter" />
-                                        </ListView.Resources>
-                                        <ListView.View>
-                                            <GridView AllowsColumnReorder="False">
-                                                <GridView.ColumnHeaderContainerStyle>
-                                                    <Style BasedOn="{StaticResource {x:Type GridViewColumnHeader}}" TargetType="{x:Type GridViewColumnHeader}">
-                                                        <Setter Property="IsHitTestVisible" Value="False"/>
-                                                    </Style>
-                                                </GridView.ColumnHeaderContainerStyle>
-                                                <GridViewColumn Header="№" DisplayMemberBinding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListViewItem}}, Converter={StaticResource OrdinalConverter}}"/>
-                                                <GridViewColumn Header="Адрес" DisplayMemberBinding="{Binding Path=Address.StringAddressValue}"/>
-                                                <GridViewColumn Header="Прибытие от" DisplayMemberBinding="{Binding Path=TimeFrom, Converter={StaticResource LocalTimeToStringConverter}}"/>
-                                                <GridViewColumn Header="Прибытие до" DisplayMemberBinding="{Binding Path=TimeTo, Converter={StaticResource LocalTimeToStringConverter}}"/>
-                                            </GridView>
-                                        </ListView.View>
-                                    </ListView>
-                                </StackPanel>
-                            </DataTemplate>
-                        </ListView.ItemTemplate>
-                    </ListView>
+                <ListBox Grid.Column="0" Grid.Row="0" Margin="0, 0, 6, 0" ItemsSource="{Binding Places}"
+                         SelectedItem="{Binding SelectedPlace, Mode=TwoWay}">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Label Content="{Binding Name}" />
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+                <Button Grid.Column="0" Grid.Row="1" Width="Auto" HorizontalAlignment="Right" Margin="0, 10, 6, 0"
+                        Padding="10, 6, 10, 6" Content="Добавить" Command="{Binding AddPlaceCommand}" />
+                <Separator Grid.Column="1" Grid.Row="0" Grid.RowSpan="2"
+                           Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" />
+                <Grid Grid.Column="2" Grid.Row="0" Grid.RowSpan="2"
+                      Visibility="{Binding SelectedPlaceVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <DockPanel Grid.Row="0">
+                        <Label DockPanel.Dock="Left" Content="Название пункта назначения: " />
+                        <TextBox DockPanel.Dock="Right" HorizontalAlignment="Stretch"
+                                 Text="{Binding SelectedPlaceName}" />
+                    </DockPanel>
+                    <DockPanel Grid.Row="1">
+                        <Label DockPanel.Dock="Left" Content="Адрес: " />
+                        <ContentPresenter ContentTemplate="{StaticResource StringWithSearchTemplate}"
+                                          Content="{Binding SelectedPlaceAddress, Converter={StaticResource AddressToAddressViewModelConverter}}" />
+                    </DockPanel>
+                    <DockPanel Grid.Row="2" VerticalAlignment="Bottom">
+                        <Button DockPanel.Dock="Left" Content="Сохранить" HorizontalAlignment="Left"
+                                Margin="6, 10, 0, 0" Padding="10, 6, 10, 6"
+                                Command="{Binding SaveSelectedPlaceCommand}" />
+                        <Button DockPanel.Dock="Right" Content="Удалить" HorizontalAlignment="Right"
+                                Margin="0, 10, 0, 0" Padding="10, 6, 10, 6"
+                                Command="{Binding DeleteSelectedPlaceCommand}" />
+                    </DockPanel>
                 </Grid>
-        </Border>
-    </Grid>
-    </ScrollViewer>
+            </Grid>
+        </TabItem>
+    </TabControl>
 </Window>

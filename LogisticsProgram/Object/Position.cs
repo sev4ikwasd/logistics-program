@@ -1,58 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using NodaTime;
+﻿using NodaTime;
 using Prism.Mvvm;
 
 namespace LogisticsProgram
 {
-    public class Position : BindableBase, IComparable<Position>
+    public class Position : BindableBase
     {
         private Address address = new Address();
 
-        public Address Address
+        private LocalTime timeFrom;
+
+        private LocalTime timeTo;
+
+        public Position()
         {
-            get
-            {
-                return address;
-            }
-            set
-            {
-                address = value;
-                RaisePropertyChanged("Address");
-            }
         }
 
-        private LocalTime timeFrom = new LocalTime();
-        public LocalTime TimeFrom {
-            get
-            {
-                return timeFrom;
-            }
-            set
-            {
-                timeFrom = value;
-                RaisePropertyChanged("TimeFrom");
-            }
-        }
-
-        private LocalTime timeTo = new LocalTime();
-        public LocalTime TimeTo
-        {
-            get
-            {
-                return timeTo;
-            }
-            set
-            {
-                timeTo = value;
-                RaisePropertyChanged("TimeTo");
-            }
-        }
-
-        public Position() { }
         public Position(Address address, LocalTime timeFrom, LocalTime timeTo)
         {
             this.address = address;
@@ -60,17 +22,34 @@ namespace LogisticsProgram
             this.timeTo = timeTo;
         }
 
-        public int CompareTo(Position position)
+        public Address Address
         {
-            return timeFrom.CompareTo(position.TimeFrom);
+            get => address;
+            set
+            {
+                address = value;
+                RaisePropertyChanged();
+            }
         }
 
-        public override bool Equals(object obj)
+        public LocalTime TimeFrom
         {
-            return obj is Position position &&
-                   address == position.Address &&
-                   timeFrom == position.TimeFrom &&
-                   timeTo == position.TimeTo;
+            get => timeFrom;
+            set
+            {
+                timeFrom = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public LocalTime TimeTo
+        {
+            get => timeTo;
+            set
+            {
+                timeTo = value;
+                RaisePropertyChanged();
+            }
         }
     }
 }
