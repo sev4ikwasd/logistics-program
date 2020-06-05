@@ -9,11 +9,8 @@ namespace LogisticsProgram
         private readonly PlacesModel model = new PlacesModel();
 
         private Place selectedPlace;
-        private Address selectedPlaceAddress = new Address();
-
-        //These two variables are a buffer to prevent values from getting written in the model before user clicked save button
+        private AddressViewModel selectedPlaceAddress = new AddressViewModel(new SearchAddressModel(new Address()));
         private string selectedPlaceName = "";
-
         private bool selectedPlaceVisible;
 
         public PlacesViewModel()
@@ -21,15 +18,16 @@ namespace LogisticsProgram
             AddPlaceCommand = new DelegateCommand(() =>
             {
                 var place = new Place();
-                model.AddPlace(place);
+                //model.AddPlace(place);
                 SelectedPlace = place;
             });
             PlaceSelectedCommand = new DelegateCommand<Place>(place => { SelectedPlace = place; });
             SaveSelectedPlaceCommand = new DelegateCommand(() =>
             {
                 SelectedPlace.Name = SelectedPlaceName;
-                SelectedPlace.Address = selectedPlaceAddress;
-                model.UpdatePlaces(SelectedPlace);
+                SelectedPlace.Address = selectedPlaceAddress.Address;
+                model.AddPlace(SelectedPlace);
+                //model.UpdatePlaces(SelectedPlace);
             });
             DeleteSelectedPlaceCommand = new DelegateCommand(() =>
             {
@@ -51,13 +49,19 @@ namespace LogisticsProgram
             {
                 selectedPlace = value;
                 if (value != null)
+                {
                     SelectedPlaceVisible = true;
+                    SelectedPlaceName = value.Name;
+                    SelectedPlaceAddress = new AddressViewModel(new SearchAddressModel(value.Address));
+                }
                 else
+                {
                     SelectedPlaceVisible = false;
-                RaisePropertyChanged();
+                    RaisePropertyChanged();
 
-                SelectedPlaceName = value.Name;
-                SelectedPlaceAddress = value.Address;
+                    SelectedPlaceName = "";
+                    SelectedPlaceAddress = new AddressViewModel(new SearchAddressModel(new Address()));
+                }
             }
         }
 
@@ -81,7 +85,7 @@ namespace LogisticsProgram
             }
         }
 
-        public Address SelectedPlaceAddress
+        public AddressViewModel SelectedPlaceAddress
         {
             get => selectedPlaceAddress;
             set

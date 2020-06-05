@@ -11,7 +11,7 @@ namespace LogisticsProgram
         public PlacesModel()
         {
             db = new DatabaseContext();
-            db.Places.Load();
+            db.Places.LoadAsync();
             Places = new ObservableCollection<Place>(db.Places.Local.ToBindingList());
         }
 
@@ -26,9 +26,12 @@ namespace LogisticsProgram
 
         public async void DeletePlace(Place place)
         {
-            Places.Remove(place);
-            db.Places.Remove(place);
-            await db.SaveChangesAsync();
+            if (Places.Contains(place))
+            {
+                Places.Remove(place);
+                db.Places.Remove(place);
+                await db.SaveChangesAsync();
+            }
         }
 
         public async void UpdatePlaces(Place place)

@@ -1,53 +1,31 @@
-﻿using System;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Threading.Tasks;
-using System.Windows;
 using Prism.Mvvm;
 
 namespace LogisticsProgram
 {
-    public class AddressModel : BindableBase
+    public abstract class BaseAddressModel : BindableBase
     {
-        public AddressModel(Address address)
+        public BaseAddressModel(Address address)
         {
             Address = address;
             Address.PropertyChanged += (s, e) => { RaisePropertyChanged(e.PropertyName); };
             Address.PropertyChanged += async (s, e) =>
             {
                 if (e.PropertyName.Equals("StringAddressValue"))
-                    await GetAddressFromApi(Address.StringAddressValue);
+                    await GetAddress(Address.StringAddressValue);
             };
             AddressVariants.CollectionChanged += (s, e) => { RaisePropertyChanged("AddressVariants"); };
         }
 
         public Address Address { get; }
 
-        public bool IsAddressValid { get; private set; } = true;
+        public bool IsAddressValid { get; protected set; } = true;
 
         public ObservableCollection<AddressVariant> AddressVariants { get; } =
             new /*Async*/ObservableCollection<AddressVariant>();
 
-        public async Task GetAddressFromApi(string value)
-        {
-            //Really bad hack
-            await Application.Current.Dispatcher.BeginInvoke((Action) delegate { AddressVariants.Clear(); });
-            try
-            {
-                /*Async*/
-                var addresses = await ApiUtility.GetInstance().GetSearchedAddresses(value);
-                if (addresses.Count == 0)
-                    IsAddressValid = false;
-                else
-                    await Application.Current.Dispatcher.BeginInvoke((Action) delegate
-                    {
-                        foreach (var address in addresses) AddressVariants.Add(address);
-                    });
-            }
-            catch (Exception)
-            {
-                IsAddressValid = false;
-            }
-        }
+        public abstract Task GetAddress(string search);
 
         public void SetAddressVariant(AddressVariant addressVariant)
         {

@@ -104,14 +104,16 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Model\AddressModel.cs" />
+    <Compile Include="Model\PlacesAndSearchAddressModel.cs" />
+    <Compile Include="Model\SearchAddressModel.cs" />
+    <Compile Include="Model\BaseAddressModel.cs" />
     <Compile Include="Model\PlacesModel.cs" />
     <Compile Include="Model\RoutesModel.cs" />
     <Compile Include="Object\Address.cs" />
     <Compile Include="Object\Place.cs" />
     <Compile Include="Object\Position.cs" />
+    <Compile Include="Object\PositionWithCustomAddressViewModel.cs" />
     <Compile Include="Object\Route.cs" />
-    <Compile Include="Utility\AddressToAddressViewModelConverter.cs" />
     <Compile Include="Utility\ApiUtility.cs" />
     <Compile Include="Utility\AsyncObservableCollection.cs" />
     <Compile Include="Utility\BasicMultiBindingConverter.cs" />

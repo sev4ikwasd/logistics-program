@@ -28,7 +28,7 @@ namespace LogisticsProgram
             return apiUtility ?? (apiUtility = new ApiUtility());
         }
 
-        public async Task< /*Async*/ObservableCollection<AddressModel.AddressVariant>> GetSearchedAddresses(
+        public async Task< /*Async*/ObservableCollection<BaseAddressModel.AddressVariant>> GetSearchedAddresses(
             string address)
         {
             var encValue = WebUtility.UrlEncode(address);
@@ -38,7 +38,7 @@ namespace LogisticsProgram
             if (response.IsSuccessStatusCode)
             {
                 /*Async*/
-                var result = new /*Async*/ObservableCollection<AddressModel.AddressVariant>();
+                var result = new /*Async*/ObservableCollection<BaseAddressModel.AddressVariant>();
                 var strResponse = await response.Content.ReadAsStringAsync();
                 var N = JSON.Parse(strResponse);
                 for (var i = 0; i < N["results"].Count; i++)
@@ -47,7 +47,7 @@ namespace LogisticsProgram
                     var lat = N["results"][i]["position"]["lat"].Value;
                     var lon = N["results"][i]["position"]["lon"].Value;
                     var addr = $"{lat},{lon}";
-                    result.Add(new AddressModel.AddressVariant(freeFormAddress, addr));
+                    result.Add(new BaseAddressModel.AddressVariant(freeFormAddress, addr));
                 }
 
                 return result;

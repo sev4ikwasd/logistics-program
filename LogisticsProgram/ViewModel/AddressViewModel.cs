@@ -7,13 +7,13 @@ namespace LogisticsProgram
 {
     public class AddressViewModel : BindableBase
     {
-        private readonly AddressModel model;
+        private readonly BaseAddressModel model;
 
-        public AddressViewModel(Address address)
+        public AddressViewModel(BaseAddressModel model)
         {
-            model = new AddressModel(address);
+            this.model = model;
             model.PropertyChanged += (s, e) => { RaisePropertyChanged(e.PropertyName); };
-            AddressChosenCommand = new DelegateCommand<AddressModel.AddressVariant>(addressVariant =>
+            AddressChosenCommand = new DelegateCommand<BaseAddressModel.AddressVariant>(addressVariant =>
             {
                 if (addressVariant != null) model.SetAddressVariant(addressVariant);
             });
@@ -31,8 +31,8 @@ namespace LogisticsProgram
             }
         }
 
-        public ObservableCollection<AddressModel.AddressVariant> AddressVariants => model.AddressVariants;
+        public ObservableCollection<BaseAddressModel.AddressVariant> AddressVariants => model.AddressVariants;
 
-        public DelegateCommand<AddressModel.AddressVariant> AddressChosenCommand { get; }
+        public DelegateCommand<BaseAddressModel.AddressVariant> AddressChosenCommand { get; }
     }
 }

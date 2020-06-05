@@ -12,6 +12,11 @@ namespace LogisticsProgram
 
         public RoutesViewModel()
         {
+            StartPosition = new PositionWithCustomAddressViewModel<PlacesAndSearchAddressModel>(model.StartPosition);
+            Positions = new ObservableCollection<PositionWithCustomAddressViewModel<SearchAddressModel>>();
+            foreach (var position in model.Positions)
+                Positions.Add(new PositionWithCustomAddressViewModel<SearchAddressModel>(position));
+
             model.PropertyChanged += (s, e) =>
             {
                 RaisePropertyChanged(e.PropertyName);
@@ -55,10 +60,15 @@ namespace LogisticsProgram
 
             AddPositionCommand = new DelegateCommand(() =>
             {
-                model.Positions.Add(new Position(new Address(), model.StartPosition.TimeFrom,
-                    model.StartPosition.TimeTo));
+                var position = new Position(new Address(), model.StartPosition.TimeFrom, model.StartPosition.TimeTo);
+                model.Positions.Add(position);
+                Positions.Add(new PositionWithCustomAddressViewModel<SearchAddressModel>(position));
             });
-            RemovePositionCommand = new DelegateCommand<Position>(item => { model.Positions.Remove(item); });
+            RemovePositionCommand = new DelegateCommand<PositionWithCustomAddressViewModel<SearchAddressModel>>(item =>
+            {
+                Positions.Remove(item);
+                model.Positions.Remove(item.Position);
+            });
             GenerateRouteCommand = new DelegateCommand(async () =>
             {
                 if (!string.IsNullOrEmpty(model.StartPosition.Address.AddressValue) && model.Positions.Count > 0)
@@ -66,7 +76,7 @@ namespace LogisticsProgram
             });
         }
 
-        public Position StartPosition => model.StartPosition;
+        public PositionWithCustomAddressViewModel<PlacesAndSearchAddressModel> StartPosition { get; set; }
 
         public Period DelayPeriod
         {
@@ -84,14 +94,14 @@ namespace LogisticsProgram
             }
         }
 
-        public ObservableCollection<Position> Positions => model.Positions;
+        public ObservableCollection<PositionWithCustomAddressViewModel<SearchAddressModel>> Positions { get; set; }
 
         public ObservableCollection<Route> Routes => model.Routes;
 
         public bool RoutesVisible { get; set; }
 
         public DelegateCommand AddPositionCommand { get; }
-        public DelegateCommand<Position> RemovePositionCommand { get; }
+        public DelegateCommand<PositionWithCustomAddressViewModel<SearchAddressModel>> RemovePositionCommand { get; }
 
         public DelegateCommand GenerateRouteCommand { get; }
     }

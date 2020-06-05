@@ -12,7 +12,6 @@
         <local:LocalTimeToStringConverter x:Key="LocalTimeToStringConverter" />
         <!--<local:PeriodToStringConverter x:Key="PeriodToStringConverter"/>-->
         <local:BasicMultiBindingConverter x:Key="BasicMultiBindingConverter" />
-        <local:AddressToAddressViewModelConverter x:Key="AddressToAddressViewModelConverter" />
         <DataTemplate x:Key="StringWithSearchTemplate">
             <DockPanel>
                 <TextBox x:Name="StartAddressTextBox" HorizontalAlignment="Stretch"
@@ -92,7 +91,7 @@
                             <DockPanel Grid.Row="0">
                                 <Label DockPanel.Dock="Left" Content="Стартовая позиция:" />
                                 <ContentPresenter ContentTemplate="{StaticResource StringWithSearchTemplate}"
-                                                  Content="{Binding StartPosition.Address, Converter={StaticResource AddressToAddressViewModelConverter}}" />
+                                                  Content="{Binding StartPosition.AddressViewModel}" />
                             </DockPanel>
                             <DockPanel Grid.Row="1">
                                 <Label DockPanel.Dock="Left" Content="Стартовое время:" />
@@ -173,7 +172,7 @@
                                                 <DataTemplate>
                                                     <ContentPresenter Margin="-5, 0, -5, 0"
                                                                       ContentTemplate="{StaticResource StringWithSearchTemplate}"
-                                                                      Content="{Binding Address, Converter={StaticResource AddressToAddressViewModelConverter}}" />
+                                                                      Content="{Binding AddressViewModel}" />
                                                 </DataTemplate>
                                             </GridViewColumn.CellTemplate>
                                         </GridViewColumn>
@@ -355,7 +354,7 @@
                     <DockPanel Grid.Row="1">
                         <Label DockPanel.Dock="Left" Content="Адрес: " />
                         <ContentPresenter ContentTemplate="{StaticResource StringWithSearchTemplate}"
-                                          Content="{Binding SelectedPlaceAddress, Converter={StaticResource AddressToAddressViewModelConverter}}" />
+                                          Content="{Binding SelectedPlaceAddress}" />
                     </DockPanel>
                     <DockPanel Grid.Row="2" VerticalAlignment="Bottom">
                         <Button DockPanel.Dock="Left" Content="Сохранить" HorizontalAlignment="Left"
