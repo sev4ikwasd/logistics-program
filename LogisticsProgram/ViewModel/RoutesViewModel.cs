@@ -13,9 +13,9 @@ namespace LogisticsProgram
         public RoutesViewModel()
         {
             StartPosition = new PositionWithCustomAddressViewModel<PlacesAndSearchAddressModel>(model.StartPosition);
-            Positions = new ObservableCollection<PositionWithCustomAddressViewModel<SearchAddressModel>>();
+            Positions = new ObservableCollection<PositionWithCustomAddressViewModel<PlacesAndSearchAddressModel>>();
             foreach (var position in model.Positions)
-                Positions.Add(new PositionWithCustomAddressViewModel<SearchAddressModel>(position));
+                Positions.Add(new PositionWithCustomAddressViewModel<PlacesAndSearchAddressModel>(position));
 
             model.PropertyChanged += (s, e) =>
             {
@@ -62,9 +62,9 @@ namespace LogisticsProgram
             {
                 var position = new Position(new Address(), model.StartPosition.TimeFrom, model.StartPosition.TimeTo);
                 model.Positions.Add(position);
-                Positions.Add(new PositionWithCustomAddressViewModel<SearchAddressModel>(position));
+                Positions.Add(new PositionWithCustomAddressViewModel<PlacesAndSearchAddressModel>(position));
             });
-            RemovePositionCommand = new DelegateCommand<PositionWithCustomAddressViewModel<SearchAddressModel>>(item =>
+            RemovePositionCommand = new DelegateCommand<PositionWithCustomAddressViewModel<PlacesAndSearchAddressModel>>(item =>
             {
                 Positions.Remove(item);
                 model.Positions.Remove(item.Position);
@@ -94,14 +94,14 @@ namespace LogisticsProgram
             }
         }
 
-        public ObservableCollection<PositionWithCustomAddressViewModel<SearchAddressModel>> Positions { get; set; }
+        public ObservableCollection<PositionWithCustomAddressViewModel<PlacesAndSearchAddressModel>> Positions { get; set; }
 
         public ObservableCollection<Route> Routes => model.Routes;
 
         public bool RoutesVisible { get; set; }
 
         public DelegateCommand AddPositionCommand { get; }
-        public DelegateCommand<PositionWithCustomAddressViewModel<SearchAddressModel>> RemovePositionCommand { get; }
+        public DelegateCommand<PositionWithCustomAddressViewModel<PlacesAndSearchAddressModel>> RemovePositionCommand { get; }
 
         public DelegateCommand GenerateRouteCommand { get; }
     }

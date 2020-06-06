@@ -15,10 +15,10 @@ namespace LogisticsProgram
 
         public PlacesViewModel()
         {
+            model.Initialize();
             AddPlaceCommand = new DelegateCommand(() =>
             {
                 var place = new Place();
-                //model.AddPlace(place);
                 SelectedPlace = place;
             });
             PlaceSelectedCommand = new DelegateCommand<Place>(place => { SelectedPlace = place; });
@@ -27,11 +27,11 @@ namespace LogisticsProgram
                 SelectedPlace.Name = SelectedPlaceName;
                 SelectedPlace.Address = selectedPlaceAddress.Address;
                 model.AddPlace(SelectedPlace);
-                //model.UpdatePlaces(SelectedPlace);
             });
             DeleteSelectedPlaceCommand = new DelegateCommand(() =>
             {
-                model.DeletePlace(SelectedPlace);
+                if(model.Places.Contains(SelectedPlace))
+                    model.DeletePlace(SelectedPlace);
                 SelectedPlace = null;
             });
         }
@@ -39,7 +39,6 @@ namespace LogisticsProgram
         public ObservableCollection<Place> Places
         {
             get => model.Places;
-            set { }
         }
 
         public Place SelectedPlace
