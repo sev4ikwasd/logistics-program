@@ -25,10 +25,24 @@ namespace LogisticsProgram
             await db.Addresses.LoadAsync();
             places = new ObservableCollection<Place>(db.Places.Local.ToBindingList());
         }
-        public async void AddPlace(Place place)
+        /*public async void AddPlace(Place place)
         {
             Places.Add(place);
             db.Places.Add(place);
+            await db.SaveChangesAsync();
+        }*/
+
+        public async void AddOrUpdatePlace(Place place)
+        {
+            if (places.Contains(place))
+            {
+                db.Entry(place).State = EntityState.Modified;
+            }
+            else
+            {
+                Places.Add(place);
+                db.Places.Add(place);
+            }
             await db.SaveChangesAsync();
         }
 
@@ -39,10 +53,10 @@ namespace LogisticsProgram
             await db.SaveChangesAsync();
         }
 
-        public async void UpdatePlaces(Place place)
+        /*public async void UpdatePlaces(Place place)
         {
             db.Entry(place).State = EntityState.Modified;
             await db.SaveChangesAsync();
-        }
+        }*/
     }
 }

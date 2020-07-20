@@ -5,14 +5,18 @@ using Prism.Mvvm;
 
 namespace LogisticsProgram
 {
-    public class AddressViewModel : BindableBase
+    public class AddressViewModel : BaseViewModel
     {
         private readonly BaseAddressModel model;
 
         public AddressViewModel(BaseAddressModel model)
         {
             this.model = model;
-            model.PropertyChanged += (s, e) => { RaisePropertyChanged(e.PropertyName); };
+            model.PropertyChanged += (s, e) =>
+            {
+                RaisePropertyChanged(e.PropertyName);
+            };
+            Validate();
             AddressChosenCommand = new DelegateCommand<BaseAddressModel.AddressVariant>(addressVariant =>
             {
                 if (addressVariant != null) model.SetAddressVariant(addressVariant);
@@ -27,12 +31,21 @@ namespace LogisticsProgram
             set
             {
                 model.Address.StringAddressValue = value;
-                if (!model.IsAddressValid) throw new Exception("Address is not valid");
+                RaisePropertyChanged();
             }
         }
 
         public ObservableCollection<BaseAddressModel.AddressVariant> AddressVariants => model.AddressVariants;
 
         public DelegateCommand<BaseAddressModel.AddressVariant> AddressChosenCommand { get; }
+        protected override void Validate()
+        {
+            ValidateProperty("StringAddressValue", StringAddressValue, propertyWithErrorsList =>
+            {
+                if(!model.IsAddressValid)
+                    propertyWithErrorsList.ListErrors.Add("Address is not valid!");
+                return propertyWithErrorsList;
+            });
+        }
     }
 }

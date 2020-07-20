@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:local="clr-namespace:LogisticsProgram"
+        xmlns:diag="clr-namespace:System.Diagnostics;assembly=WindowsBase"
         mc:Ignorable="d"
         Title="Логистическая программа" Height="810" Width="1200">
     <Window.Resources>
@@ -17,8 +18,8 @@
                 <TextBox x:Name="StartAddressTextBox" HorizontalAlignment="Stretch"
                          Width="{Binding ActualWidth, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DockPanel}}}">
                     <TextBox.Text>
-                        <Binding Path="StringAddressValue" Mode="TwoWay"
-                                 UpdateSourceTrigger="PropertyChanged" ValidatesOnExceptions="True" />
+                        <Binding Path="StringAddressValue" Mode="TwoWay" ValidatesOnNotifyDataErrors="True"
+                                 UpdateSourceTrigger="PropertyChanged"/>
                     </TextBox.Text>
                 </TextBox>
                 <Popup
@@ -91,13 +92,13 @@
                             <DockPanel Grid.Row="0">
                                 <Label DockPanel.Dock="Left" Content="Стартовая позиция:" />
                                 <ContentPresenter ContentTemplate="{StaticResource StringWithSearchTemplate}"
-                                                  Content="{Binding StartPosition.AddressViewModel}" />
+                                                  Content="{Binding StartPositionAddressViewModel}" />
                             </DockPanel>
                             <DockPanel Grid.Row="1">
                                 <Label DockPanel.Dock="Left" Content="Стартовое время:" />
                                 <TextBox DockPanel.Dock="Right" Name="StartTime">
                                     <TextBox.Text>
-                                        <Binding Path="StartPosition.TimeFrom" UpdateSourceTrigger="PropertyChanged">
+                                        <Binding Path="StartPositionTimeFrom" ValidatesOnNotifyDataErrors="True" UpdateSourceTrigger="PropertyChanged">
                                             <Binding.ValidationRules>
                                                 <ExceptionValidationRule />
                                             </Binding.ValidationRules>
@@ -112,7 +113,7 @@
                                 <Label DockPanel.Dock="Left" Content="Конечное время:" />
                                 <TextBox DockPanel.Dock="Right" Name="EndTime">
                                     <TextBox.Text>
-                                        <Binding Path="StartPosition.TimeTo" UpdateSourceTrigger="PropertyChanged">
+                                        <Binding Path="StartPositionTimeTo" ValidatesOnNotifyDataErrors="True" UpdateSourceTrigger="PropertyChanged">
                                             <Binding.ValidationRules>
                                                 <ExceptionValidationRule />
                                             </Binding.ValidationRules>
@@ -181,7 +182,7 @@
                                                 <DataTemplate>
                                                     <TextBox Margin="-5, 0, -5, 0" TextAlignment="Right">
                                                         <TextBox.Text>
-                                                            <Binding Path="TimeFrom"
+                                                            <Binding Path="TimeFrom" ValidatesOnNotifyDataErrors="True"
                                                                      UpdateSourceTrigger="PropertyChanged">
                                                                 <Binding.ValidationRules>
                                                                     <ExceptionValidationRule />
@@ -200,7 +201,7 @@
                                                 <DataTemplate>
                                                     <TextBox Margin="-5, 0, -5, 0" TextAlignment="Right">
                                                         <TextBox.Text>
-                                                            <Binding Path="TimeTo"
+                                                            <Binding Path="TimeTo" ValidatesOnNotifyDataErrors="True"
                                                                      UpdateSourceTrigger="PropertyChanged">
                                                                 <Binding.ValidationRules>
                                                                     <ExceptionValidationRule />
@@ -231,8 +232,18 @@
                                         Margin="7, 0, 0, 5" Width="18" Command="{Binding Path=AddPositionCommand}" />
                                 <Button DockPanel.Dock="Right" Content="Сгенерировать маршрут"
                                         HorizontalAlignment="Right" Margin="0, 0, 7, 5" Padding="5, 0, 5, 0"
-                                        Command="{Binding Path=GenerateRouteCommand}" Name="GenerateRouteButton" />
-                                <!--<Button.Style>
+                                        Command="{Binding Path=GenerateRouteCommand}" >
+                                    <Button.Style>
+                                        <Style TargetType="Button">
+                                            <Setter Property="IsEnabled" Value="True" />
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Path=HasErrors, diag:PresentationTraceSources.TraceLevel=High}" Value="True">
+                                                    <Setter Property="IsEnabled" Value="False" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Button.Style>
+                                    <!--<Button.Style>
                                         <Style TargetType="Button">
                                             <Setter Property="IsEnabled" Value="False"/>
                                             <Style.Triggers>
@@ -244,8 +255,8 @@
                                                 </MultiDataTrigger>
                                             </Style.Triggers>
                                         </Style>
-                                    </Button.Style>
-                                </Button>-->
+                                    </Button.Style>-->
+                                </Button>
                             </DockPanel>
                         </Grid>
                     </Border>
@@ -349,7 +360,7 @@
                     <DockPanel Grid.Row="0">
                         <Label DockPanel.Dock="Left" Content="Название пункта назначения: " />
                         <TextBox DockPanel.Dock="Right" HorizontalAlignment="Stretch"
-                                 Text="{Binding SelectedPlaceName}" />
+                                 Text="{Binding SelectedPlaceName, ValidatesOnNotifyDataErrors=True, UpdateSourceTrigger=PropertyChanged}" />
                     </DockPanel>
                     <DockPanel Grid.Row="1">
                         <Label DockPanel.Dock="Left" Content="Адрес: " />

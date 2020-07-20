@@ -1,10 +1,15 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Linq;
 using Prism.Commands;
 using Prism.Mvvm;
 
 namespace LogisticsProgram
 {
-    public class PlacesViewModel : BindableBase
+    public class PlacesViewModel : BaseViewModel
     {
         private readonly PlacesModel model = new PlacesModel();
 
@@ -21,12 +26,12 @@ namespace LogisticsProgram
                 var place = new Place();
                 SelectedPlace = place;
             });
-            PlaceSelectedCommand = new DelegateCommand<Place>(place => { SelectedPlace = place; });
+            PlaceSelectedCommand = new DelegateCommand<Place>(place => { SelectedPlace = place;});
             SaveSelectedPlaceCommand = new DelegateCommand(() =>
             {
                 SelectedPlace.Name = SelectedPlaceName;
                 SelectedPlace.Address = selectedPlaceAddress.Address;
-                model.AddPlace(SelectedPlace);
+                model.AddOrUpdatePlace(SelectedPlace);
             });
             DeleteSelectedPlaceCommand = new DelegateCommand(() =>
             {
@@ -56,7 +61,7 @@ namespace LogisticsProgram
                 else
                 {
                     SelectedPlaceVisible = false;
-                    RaisePropertyChanged();
+                    //RaisePropertyChanged();
 
                     SelectedPlaceName = "";
                     SelectedPlaceAddress = new AddressViewModel(new SearchAddressModel(new Address()));
@@ -98,5 +103,15 @@ namespace LogisticsProgram
         public DelegateCommand<Place> PlaceSelectedCommand { get; }
         public DelegateCommand SaveSelectedPlaceCommand { get; }
         public DelegateCommand DeleteSelectedPlaceCommand { get; }
+        
+        protected override void Validate()
+        {
+            ValidateProperty("SelectedPlaceName", SelectedPlaceName, propertyWithErrorsList =>
+            {
+                if (string.IsNullOrEmpty(SelectedPlaceName))
+                    propertyWithErrorsList.ListErrors.Add("Name should not be empty!");
+                return propertyWithErrorsList;
+            });
+        }
     }
 }

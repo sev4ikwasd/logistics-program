@@ -9,6 +9,8 @@ namespace LogisticsProgram
         public BaseAddressModel(Address address)
         {
             Address = address;
+            if (string.IsNullOrWhiteSpace(Address.AddressValue))
+                IsAddressValid = false;
             Address.PropertyChanged += (s, e) => { RaisePropertyChanged(e.PropertyName); };
             Address.PropertyChanged += async (s, e) =>
             {
@@ -20,7 +22,16 @@ namespace LogisticsProgram
 
         public Address Address { get; }
 
-        public bool IsAddressValid { get; protected set; } = true;
+        private bool isAddressValid = true;
+        public bool IsAddressValid
+        {
+            get => isAddressValid;
+            protected set
+            {
+                isAddressValid = value;
+                RaisePropertyChanged();
+            }
+        }
 
         public ObservableCollection<AddressVariant> AddressVariants { get; } =
             new /*Async*/ObservableCollection<AddressVariant>();
