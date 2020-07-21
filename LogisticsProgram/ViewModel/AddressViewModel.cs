@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using Prism.Commands;
-using Prism.Mvvm;
 
 namespace LogisticsProgram
 {
@@ -12,10 +10,7 @@ namespace LogisticsProgram
         public AddressViewModel(BaseAddressModel model)
         {
             this.model = model;
-            model.PropertyChanged += (s, e) =>
-            {
-                RaisePropertyChanged(e.PropertyName);
-            };
+            model.PropertyChanged += (s, e) => { RaisePropertyChanged(e.PropertyName); };
             Validate();
             AddressChosenCommand = new DelegateCommand<BaseAddressModel.AddressVariant>(addressVariant =>
             {
@@ -38,11 +33,12 @@ namespace LogisticsProgram
         public ObservableCollection<BaseAddressModel.AddressVariant> AddressVariants => model.AddressVariants;
 
         public DelegateCommand<BaseAddressModel.AddressVariant> AddressChosenCommand { get; }
+
         protected override void Validate()
         {
             ValidateProperty("StringAddressValue", StringAddressValue, propertyWithErrorsList =>
             {
-                if(!model.IsAddressValid)
+                if (!model.IsAddressValid)
                     propertyWithErrorsList.ListErrors.Add("Address is not valid!");
                 return propertyWithErrorsList;
             });

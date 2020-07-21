@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Linq;
+﻿using System.Collections.ObjectModel;
 using Prism.Commands;
-using Prism.Mvvm;
 
 namespace LogisticsProgram
 {
@@ -26,7 +20,7 @@ namespace LogisticsProgram
                 var place = new Place();
                 SelectedPlace = place;
             });
-            PlaceSelectedCommand = new DelegateCommand<Place>(place => { SelectedPlace = place;});
+            PlaceSelectedCommand = new DelegateCommand<Place>(place => { SelectedPlace = place; });
             SaveSelectedPlaceCommand = new DelegateCommand(() =>
             {
                 SelectedPlace.Name = SelectedPlaceName;
@@ -35,16 +29,13 @@ namespace LogisticsProgram
             });
             DeleteSelectedPlaceCommand = new DelegateCommand(() =>
             {
-                if(model.Places.Contains(SelectedPlace))
+                if (model.Places.Contains(SelectedPlace))
                     model.DeletePlace(SelectedPlace);
                 SelectedPlace = null;
             });
         }
 
-        public ObservableCollection<Place> Places
-        {
-            get => model.Places;
-        }
+        public ObservableCollection<Place> Places => model.Places;
 
         public Place SelectedPlace
         {
@@ -103,7 +94,7 @@ namespace LogisticsProgram
         public DelegateCommand<Place> PlaceSelectedCommand { get; }
         public DelegateCommand SaveSelectedPlaceCommand { get; }
         public DelegateCommand DeleteSelectedPlaceCommand { get; }
-        
+
         protected override void Validate()
         {
             ValidateProperty("SelectedPlaceName", SelectedPlaceName, propertyWithErrorsList =>

@@ -170,16 +170,13 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="CommonServiceLocator">
-      <Version>2.0.5</Version>
-    </PackageReference>
     <PackageReference Include="EntityFramework">
       <Version>6.4.4</Version>
     </PackageReference>
-    <PackageReference Include="Google.OrTools">
-      <Version>7.7.7816</Version>
+    <PackageReference Include="FontAwesome.WPF">
+      <Version>4.7.0.9</Version>
     </PackageReference>
-    <PackageReference Include="Google.OrTools.runtime.win-x64">
+    <PackageReference Include="Google.OrTools">
       <Version>7.7.7816</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf">

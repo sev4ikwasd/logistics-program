@@ -6,6 +6,7 @@
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:local="clr-namespace:LogisticsProgram"
         xmlns:diag="clr-namespace:System.Diagnostics;assembly=WindowsBase"
+        xmlns:fa="http://schemas.fontawesome.io/icons/"
         mc:Ignorable="d"
         Title="Логистическая программа" Height="810" Width="1200">
     <Window.Resources>
@@ -19,7 +20,7 @@
                          Width="{Binding ActualWidth, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DockPanel}}}">
                     <TextBox.Text>
                         <Binding Path="StringAddressValue" Mode="TwoWay" ValidatesOnNotifyDataErrors="True"
-                                 UpdateSourceTrigger="PropertyChanged"/>
+                                 UpdateSourceTrigger="PropertyChanged" />
                     </TextBox.Text>
                 </TextBox>
                 <Popup
@@ -98,7 +99,8 @@
                                 <Label DockPanel.Dock="Left" Content="Стартовое время:" />
                                 <TextBox DockPanel.Dock="Right" Name="StartTime">
                                     <TextBox.Text>
-                                        <Binding Path="StartPositionTimeFrom" ValidatesOnNotifyDataErrors="True" UpdateSourceTrigger="PropertyChanged">
+                                        <Binding Path="StartPositionTimeFrom" ValidatesOnNotifyDataErrors="True"
+                                                 UpdateSourceTrigger="PropertyChanged">
                                             <Binding.ValidationRules>
                                                 <ExceptionValidationRule />
                                             </Binding.ValidationRules>
@@ -113,7 +115,8 @@
                                 <Label DockPanel.Dock="Left" Content="Конечное время:" />
                                 <TextBox DockPanel.Dock="Right" Name="EndTime">
                                     <TextBox.Text>
-                                        <Binding Path="StartPositionTimeTo" ValidatesOnNotifyDataErrors="True" UpdateSourceTrigger="PropertyChanged">
+                                        <Binding Path="StartPositionTimeTo" ValidatesOnNotifyDataErrors="True"
+                                                 UpdateSourceTrigger="PropertyChanged">
                                             <Binding.ValidationRules>
                                                 <ExceptionValidationRule />
                                             </Binding.ValidationRules>
@@ -227,37 +230,49 @@
                                     </GridView>
                                 </ListView.View>
                             </ListView>
-                            <DockPanel Grid.Row="7">
-                                <Button DockPanel.Dock="Left" Content="+" HorizontalAlignment="Left"
+                            <Grid Grid.Row="7" Margin="0, 4, 0, 0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <Button Grid.Column="0" Content="+" HorizontalAlignment="Left"
                                         Margin="7, 0, 0, 5" Width="18" Command="{Binding Path=AddPositionCommand}" />
-                                <Button DockPanel.Dock="Right" Content="Сгенерировать маршрут"
-                                        HorizontalAlignment="Right" Margin="0, 0, 7, 5" Padding="5, 0, 5, 0"
-                                        Command="{Binding Path=GenerateRouteCommand}" >
-                                    <Button.Style>
-                                        <Style TargetType="Button">
-                                            <Setter Property="IsEnabled" Value="True" />
+                                <fa:ImageAwesome Grid.Column="1" Icon="Spinner" Spin="True" Height="20" Width="20"
+                                                 Margin="0, 0, 10, 2" VerticalAlignment="Center">
+                                    <fa:ImageAwesome.Style>
+                                        <Style TargetType="fa:ImageAwesome">
+                                            <Setter Property="Visibility" Value="Visible" />
                                             <Style.Triggers>
-                                                <DataTrigger Binding="{Binding Path=HasErrors, diag:PresentationTraceSources.TraceLevel=High}" Value="True">
-                                                    <Setter Property="IsEnabled" Value="False" />
+                                                <DataTrigger
+                                                    Binding="{Binding Path=IsCalculatingRoute}"
+                                                    Value="False">
+                                                    <Setter Property="Visibility" Value="Hidden" />
                                                 </DataTrigger>
                                             </Style.Triggers>
                                         </Style>
-                                    </Button.Style>
-                                    <!--<Button.Style>
+                                    </fa:ImageAwesome.Style>
+                                </fa:ImageAwesome>
+                                <Button Grid.Column="2" Content="Сгенерировать маршрут"
+                                        HorizontalAlignment="Right" Margin="0, 0, 7, 5" Padding="5, 0, 5, 0"
+                                        Command="{Binding Path=GenerateRouteCommand}">
+                                    <Button.Style>
                                         <Style TargetType="Button">
-                                            <Setter Property="IsEnabled" Value="False"/>
+                                            <Setter Property="IsEnabled" Value="False" />
                                             <Style.Triggers>
                                                 <MultiDataTrigger>
                                                     <MultiDataTrigger.Conditions>
-                                                        <Condition Binding="{Binding Path=(Validation.HasError), ElementName=StartTime}" Value="False"/>
+                                                        <Condition Binding="{Binding Path=HasErrors, diag:PresentationTraceSources.TraceLevel=High}" Value="False" />
+                                                        <Condition Binding="{Binding Path=IsCalculatingRoute}"
+                                                                   Value="False" />
                                                     </MultiDataTrigger.Conditions>
-                                                <Setter Property="IsEnabled" Value="True"/>
+                                                    <Setter Property="IsEnabled" Value="True" />
                                                 </MultiDataTrigger>
                                             </Style.Triggers>
                                         </Style>
-                                    </Button.Style>-->
+                                    </Button.Style>
                                 </Button>
-                            </DockPanel>
+                            </Grid>
                         </Grid>
                     </Border>
                     <Border Grid.Row="1" BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Stretch"

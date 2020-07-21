@@ -1,5 +1,4 @@
 ﻿using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Data.Entity;
 using Prism.Mvvm;
 
@@ -8,22 +7,19 @@ namespace LogisticsProgram
     public class PlacesModel : BindableBase
     {
         private readonly DatabaseContext db;
-        private ObservableCollection<Place> places;
-
-        public ObservableCollection<Place> Places
-        {
-            get => places;
-        }
 
         public PlacesModel()
         {
             db = new DatabaseContext();
         }
 
-        public async void Initialize() {
+        public ObservableCollection<Place> Places { get; private set; }
+
+        public async void Initialize()
+        {
             await db.Places.LoadAsync();
             await db.Addresses.LoadAsync();
-            places = new ObservableCollection<Place>(db.Places.Local.ToBindingList());
+            Places = new ObservableCollection<Place>(db.Places.Local.ToBindingList());
         }
         /*public async void AddPlace(Place place)
         {
@@ -34,7 +30,7 @@ namespace LogisticsProgram
 
         public async void AddOrUpdatePlace(Place place)
         {
-            if (places.Contains(place))
+            if (Places.Contains(place))
             {
                 db.Entry(place).State = EntityState.Modified;
             }
@@ -43,6 +39,7 @@ namespace LogisticsProgram
                 Places.Add(place);
                 db.Places.Add(place);
             }
+
             await db.SaveChangesAsync();
         }
 

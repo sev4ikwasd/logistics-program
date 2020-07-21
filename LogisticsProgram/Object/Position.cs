@@ -20,6 +20,10 @@ namespace LogisticsProgram
             this.address = address;
             this.timeFrom = timeFrom;
             this.timeTo = timeTo;
+            address.PropertyChanged += (s, e) =>
+            {
+                RaisePropertyChanged(e.PropertyName);
+            };
         }
 
         public Address Address

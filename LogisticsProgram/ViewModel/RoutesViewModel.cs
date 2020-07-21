@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using NodaTime;
 using Prism.Commands;
-using Prism.Mvvm;
 
 namespace LogisticsProgram
 {
@@ -14,10 +11,12 @@ namespace LogisticsProgram
 
         public RoutesViewModel()
         {
-            StartPositionAddressViewModel = new AddressViewModel(new PlacesAndSearchAddressModel(model.StartPosition.Address));
+            StartPositionAddressViewModel =
+                new AddressViewModel(new PlacesAndSearchAddressModel(model.StartPosition.Address));
             Positions = new ObservableCollection<PositionsListItemViewModel>();
             foreach (var position in model.Positions)
-                Positions.Add(new PositionsListItemViewModel(position, PositionsListItemTimeFromValidationFunction, PositionsListItemTimeToValidationFunction));
+                Positions.Add(new PositionsListItemViewModel(position, PositionsListItemTimeFromValidationFunction,
+                    PositionsListItemTimeToValidationFunction));
             model.PropertyChanged += (s, e) =>
             {
                 RaisePropertyChanged(e.PropertyName);
@@ -31,20 +30,15 @@ namespace LogisticsProgram
                 }
             };
             Validate();
-            StartPositionAddressViewModel.ErrorsChanged += (sender, args) =>
-            {
-                Validate();
-            };
-            Positions.CollectionChanged += (sender, args) =>
-            {
-                Validate();
-            };
+            StartPositionAddressViewModel.ErrorsChanged += (sender, args) => { Validate(); };
+            Positions.CollectionChanged += (sender, args) => { Validate(); };
 
             AddPositionCommand = new DelegateCommand(() =>
             {
                 var position = new Position(new Address(), model.StartPosition.TimeFrom, model.StartPosition.TimeTo);
                 model.Positions.Add(position);
-                Positions.Add(new PositionsListItemViewModel(position, PositionsListItemTimeFromValidationFunction, PositionsListItemTimeToValidationFunction));
+                Positions.Add(new PositionsListItemViewModel(position, PositionsListItemTimeFromValidationFunction,
+                    PositionsListItemTimeToValidationFunction));
             });
             RemovePositionCommand = new DelegateCommand<PositionsListItemViewModel>(item =>
             {
@@ -57,6 +51,7 @@ namespace LogisticsProgram
                     await model.GenerateRoute();
             });
         }
+
         public AddressViewModel StartPositionAddressViewModel { get; set; }
 
         public LocalTime StartPositionTimeFrom
@@ -64,7 +59,7 @@ namespace LogisticsProgram
             get => model.StartPosition.TimeFrom;
             set => model.StartPosition.TimeFrom = value;
         }
-        
+
         public LocalTime StartPositionTimeTo
         {
             get => model.StartPosition.TimeTo;
@@ -91,39 +86,37 @@ namespace LogisticsProgram
 
         public ObservableCollection<Route> Routes => model.Routes;
 
+        public bool IsCalculatingRoute => model.IsCalculatingRoute;
         public bool RoutesVisible { get; set; }
+
 
         public DelegateCommand AddPositionCommand { get; }
         public DelegateCommand<PositionsListItemViewModel> RemovePositionCommand { get; }
 
         public DelegateCommand GenerateRouteCommand { get; }
+
         protected override void Validate()
         {
             ValidateProperty("StartPositionTimeFrom", StartPositionTimeFrom, propertyWithErrorsList =>
             {
                 if (StartPositionTimeTo < StartPositionTimeFrom)
-                {
-                    propertyWithErrorsList.ListErrors.Add("Start position time \"from\" should be less than time \"to\"!");
-                }
+                    propertyWithErrorsList.ListErrors.Add(
+                        "Start position time \"from\" should be less than time \"to\"!");
                 return propertyWithErrorsList;
             });
             ValidateProperty("StartPositionTimeTo", StartPositionTimeTo, propertyWithErrorsList =>
             {
                 if (StartPositionTimeFrom > StartPositionTimeTo)
-                {
-                    propertyWithErrorsList.ListErrors.Add("Start position time \"to\" should be greater than time \"from\"!");
-                }
+                    propertyWithErrorsList.ListErrors.Add(
+                        "Start position time \"to\" should be greater than time \"from\"!");
                 return propertyWithErrorsList;
             });
             ValidateProperty("Positions", Positions, propertyWithErrorsList =>
             {
-                if (Positions.Count == 0)
-                {
-                    propertyWithErrorsList.ListErrors.Add("Positions list should not be empty!");
-                }
+                if (Positions.Count == 0) propertyWithErrorsList.ListErrors.Add("Positions list should not be empty!");
                 return propertyWithErrorsList;
             });
-            foreach (PositionsListItemViewModel positionsListItemViewModel in Positions)
+            foreach (var positionsListItemViewModel in Positions)
             {
                 positionsListItemViewModel.ForceValidate();
                 if (positionsListItemViewModel.HasErrors) HasErrors = true;
@@ -132,74 +125,66 @@ namespace LogisticsProgram
             if (StartPositionAddressViewModel.HasErrors) HasErrors = true;
         }
 
-        private PropertyWithErrorsList PositionsListItemTimeFromValidationFunction(PropertyWithErrorsList propertyWithErrorsList)
+        private PropertyWithErrorsList PositionsListItemTimeFromValidationFunction(
+            PropertyWithErrorsList propertyWithErrorsList)
         {
-            if ((LocalTime)propertyWithErrorsList.Property < StartPositionTimeFrom)
-            {
-                propertyWithErrorsList.ListErrors.Add("Position time \"from\" should be greater or equal to time \"from\" of the start position!");
-            }
+            if ((LocalTime) propertyWithErrorsList.Property < StartPositionTimeFrom)
+                propertyWithErrorsList.ListErrors.Add(
+                    "Position time \"from\" should be greater or equal to time \"from\" of the start position!");
 
             if ((LocalTime) propertyWithErrorsList.Property > StartPositionTimeTo)
-            {
-                propertyWithErrorsList.ListErrors.Add("Position time \"from\" should be less than time \"to\" of the start position!");
-            }
+                propertyWithErrorsList.ListErrors.Add(
+                    "Position time \"from\" should be less than time \"to\" of the start position!");
 
             return propertyWithErrorsList;
         }
-        
-        private PropertyWithErrorsList PositionsListItemTimeToValidationFunction(PropertyWithErrorsList propertyWithErrorsList)
+
+        private PropertyWithErrorsList PositionsListItemTimeToValidationFunction(
+            PropertyWithErrorsList propertyWithErrorsList)
         {
-            
-            if ((LocalTime)propertyWithErrorsList.Property > StartPositionTimeTo)
-            {
-                propertyWithErrorsList.ListErrors.Add("Position time \"to\" should be less than time \"to\" of the start position!");
-            }
+            if ((LocalTime) propertyWithErrorsList.Property > StartPositionTimeTo)
+                propertyWithErrorsList.ListErrors.Add(
+                    "Position time \"to\" should be less than time \"to\" of the start position!");
 
             if ((LocalTime) propertyWithErrorsList.Property < StartPositionTimeFrom)
-            {
-                propertyWithErrorsList.ListErrors.Add("Position time \"to\" should be greater or equal to time \"from\" of the start position!");
-            }
-            
+                propertyWithErrorsList.ListErrors.Add(
+                    "Position time \"to\" should be greater or equal to time \"from\" of the start position!");
+
             return propertyWithErrorsList;
         }
-        
+
         public class PositionsListItemViewModel : BaseViewModel
         {
-            private readonly Position position;
             private readonly Func<PropertyWithErrorsList, PropertyWithErrorsList> timeFromValidationFunction;
             private readonly Func<PropertyWithErrorsList, PropertyWithErrorsList> timeToValidationFunction;
 
-            public Position Position => position;
+            public PositionsListItemViewModel(Position position,
+                Func<PropertyWithErrorsList, PropertyWithErrorsList> timeFromValidationFunction,
+                Func<PropertyWithErrorsList, PropertyWithErrorsList> timeToValidationFunction)
+            {
+                Position = position;
+                AddressViewModel = new AddressViewModel(new PlacesAndSearchAddressModel(position.Address));
+                this.timeFromValidationFunction = timeFromValidationFunction;
+                this.timeToValidationFunction = timeToValidationFunction;
+                position.PropertyChanged += (s, e) => { RaisePropertyChanged(e.PropertyName); };
+                Validate();
+                AddressViewModel.ErrorsChanged += (sender, args) => { Validate(); };
+            }
+
+            public Position Position { get; }
 
             public AddressViewModel AddressViewModel { get; set; }
 
             public LocalTime TimeFrom
             {
-                get => position.TimeFrom;
-                set => position.TimeFrom = value;
+                get => Position.TimeFrom;
+                set => Position.TimeFrom = value;
             }
 
             public LocalTime TimeTo
             {
-                get => position.TimeTo;
-                set => position.TimeTo = value;
-            }
-
-            public PositionsListItemViewModel(Position position, Func<PropertyWithErrorsList, PropertyWithErrorsList> timeFromValidationFunction, Func<PropertyWithErrorsList, PropertyWithErrorsList> timeToValidationFunction)
-            {
-                this.position = position;
-                AddressViewModel = new AddressViewModel(new PlacesAndSearchAddressModel(position.Address));
-                this.timeFromValidationFunction = timeFromValidationFunction;
-                this.timeToValidationFunction = timeToValidationFunction;
-                position.PropertyChanged += (s, e) =>
-                {
-                    RaisePropertyChanged(e.PropertyName);
-                };
-                Validate();
-                AddressViewModel.ErrorsChanged += (sender, args) =>
-                {
-                    Validate();
-                };
+                get => Position.TimeTo;
+                set => Position.TimeTo = value;
             }
 
             protected override void Validate()

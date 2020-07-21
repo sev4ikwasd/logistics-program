@@ -12,6 +12,8 @@ namespace LogisticsProgram
 {
     public class RoutesModel : BindableBase
     {
+        private bool isCalculatingRoute;
+
         public RoutesModel()
         {
             StartPosition.PropertyChanged += (s, e) => { RaisePropertyChanged("StartPosition_" + e.PropertyName); };
@@ -44,6 +46,16 @@ namespace LogisticsProgram
 
         public ObservableCollection<Route> Routes { get; } = new ObservableCollection<Route>();
 
+        public bool IsCalculatingRoute
+        {
+            get => isCalculatingRoute;
+            private set
+            {
+                isCalculatingRoute = value;
+                RaisePropertyChanged();
+            }
+        }
+
         private void PositionChanged(object sender, PropertyChangedEventArgs e)
         {
             RaisePropertyChanged("Positions_" + e.PropertyName);
@@ -52,6 +64,7 @@ namespace LogisticsProgram
         public async Task GenerateRoute()
         {
             Routes.Clear();
+            IsCalculatingRoute = true;
 
             var fullPositions = new List<Position>();
             fullPositions.Add(StartPosition);
@@ -155,6 +168,7 @@ namespace LogisticsProgram
                 }
             }
 
+            IsCalculatingRoute = false;
             RaisePropertyChanged("Routes");
         }
 

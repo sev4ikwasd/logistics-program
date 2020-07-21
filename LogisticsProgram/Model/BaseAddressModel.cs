@@ -6,6 +6,8 @@ namespace LogisticsProgram
 {
     public abstract class BaseAddressModel : BindableBase
     {
+        private bool isAddressValid = true;
+
         public BaseAddressModel(Address address)
         {
             Address = address;
@@ -22,7 +24,6 @@ namespace LogisticsProgram
 
         public Address Address { get; }
 
-        private bool isAddressValid = true;
         public bool IsAddressValid
         {
             get => isAddressValid;

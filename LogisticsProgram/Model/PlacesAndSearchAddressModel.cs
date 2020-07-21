@@ -23,7 +23,8 @@ namespace LogisticsProgram
             await db.Addresses.LoadAsync();
             var places = new ObservableCollection<Place>(db.Places.Local.ToBindingList());
             foreach (var place in places)
-                if (place.Name.ToLower().Contains(search.ToLower()) || place.Address.StringAddressValue.ToLower().Contains(search.ToLower()))
+                if (place.Name.ToLower().Contains(search.ToLower()) ||
+                    place.Address.StringAddressValue.ToLower().Contains(search.ToLower()))
                     await Application.Current.Dispatcher.BeginInvoke((Action) delegate
                     {
                         AddressVariants.Add(new AddressVariant($"{place.Name} ({place.Address.StringAddressValue})",
